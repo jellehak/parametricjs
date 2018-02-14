@@ -1,0 +1,16 @@
+{
+    "name": "y3d",
+    "version": "1.0.8",
+    "description": "A 3D javascript engine",
+    "main": "dist/y3d.js",
+    "scripts": {
+        "build": "webpack --env build --display-modules",
+        "start": "webpack-dev-server --progress --colors --watch --env dev --open"
+    },
+    "dependencies": {
+        "three": "^0.88.0"
+    },
+    "devDependencies": {},
+    "author": "",
+    "license": "ISC"
+}
