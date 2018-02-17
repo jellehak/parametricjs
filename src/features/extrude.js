@@ -1,38 +1,41 @@
 import PathToShape from '../helpers/PathToShape'
 
 export default function extrude(input) {
-    let { ycad, cadData, scene, feature, object3d } = input;
+    const { ycad, cadData, scene, feature, object3d } = input;
+    const { compile, getFeatureById } = ycad
+    const { selectById, sketchId, settings } = feature
+    const { id, settings: extrudeSettings } = feature
+    const { amount, bevelEnabled, bevelSegments, steps, bevelSize, bevelThickness } = extrudeSettings
 
-    //Compile Extrude settings?
-    let data = feature.data
-    let _data = Object.create(data) //Create copy
-    _data.amount = ycad.compile(data.amount)
+    //Compile parametric fields 
+    let _data = Object.create(feature) //Create copy of settings
+    _data.amount = compile(amount) //Compile Extrude settings?
 
-    let what = ycad.getFeatureById(data.selectById || data.sketchId)
+    const target = getFeatureById(selectById || sketchId)
 
-    if (!what) {
-        console.warn("[extrude] couldnt find suitable path to extrude")
+    if (!target) {
+        console.warn(`[extrude] couldnt find suitable path to extrude`, feature)
         return;
     }
 
-    //Use compiled sketch?
-    if (!what.data._path) what.data._path = what.data.path
+    //Use static sketch or parametric sketch?
+    const { path, _path: pathCompiled } = target
 
-    let shape = PathToShape(what.data._path)
+    //Get Shape
+    const shape = feature._shape || PathToShape(path || pathCompiled)
 
     //Extrude
-    //Default Extrude Settings
-    _data.bevelSize = _data.bevelSize || 0
+    const extrudeSettingsMerged = Object.assign(extrudeSettings, { amount: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1 })
+        //_data || { amount: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1 };
+    const color = 0x8080f0
+    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettingsMerged)
+    const mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: color }))
 
-    let extrudeSettings = _data || { amount: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1 };
-    let color = 0x8080f0
-    let geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
-    let mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: color }))
+    //Attach mesh to the feature
+    mesh.name = `[extrude]${id}`
+    feature._mesh = mesh
 
     object3d.add(mesh)
-
-    //var extrudeSettings = { amount: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
-    //extrude(shape, _extrudeSettings, 0x8080f0, 0, 0, 0, 0, 0, 0, 1);
 }
 
 

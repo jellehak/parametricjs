@@ -1,4 +1,4 @@
-export default {
+const cadData = {
     title: 'Simple box',
     features: [{
         id: 'box',
@@ -28,3 +28,23 @@ export default {
         }
     }]
 }
+
+
+const {
+    scene,
+    add
+} = y3d.setup({
+    camera: {
+        x: 100,
+        y: 100,
+        z: 100
+    },
+    size: "1 unit = 1 mm",
+    background: "#fff"
+})
+add({
+    type: 'axis'
+})
+
+let part = new YCAD({ cad: cadData, scene: scene })
+scene.add(part.render())

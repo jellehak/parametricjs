@@ -1,14 +1,14 @@
 {
-    "name": "y3d",
-    "version": "1.0.8",
+    "name": "ycad",
+    "version": "0.0.1",
     "description": "A 3D javascript engine",
-    "main": "dist/y3d.js",
+    "main": "dist/ycad.js",
     "scripts": {
         "build": "webpack --env build --display-modules",
         "start": "webpack-dev-server --progress --colors --watch --env dev --open"
     },
     "dependencies": {
-        "three": "^0.88.0"
+        "three": "^0.90.0"
     },
     "devDependencies": {},
     "author": "",

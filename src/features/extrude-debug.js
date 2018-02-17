@@ -1,10 +1,10 @@
-function extrude(input) {
-    let { ycad, cadData, scene, compile, feature, object3d } = input;
+import PathToShape from '../helpers/PathToShape'
 
-
+export default function extrude(input) {
+    const { ycad, cadData, scene, compile, feature, object3d } = input;
     // feature.data._settings = feature.data.settings
-    // let extrudeSettings = feature.data.settings
-    // let _extrudeSettings = Object.create(feature.data._settings)
+    let extrudeSettings = feature.settings
+        // let _extrudeSettings = Object.create(feature.data._settings)
 
     //Compile Extrude settings?
     _extrudeSettings.amount = ycad.compile(extrudeSettings.amount);
@@ -17,13 +17,14 @@ function extrude(input) {
     if (!what) {
         return;
     }
+
     //Use compiled sketch?
     if (!what.data._path) what.data._path = what.data.path
 
     let shape = PathToShape(what.data._path)
 
-    //var extrudeSettings = { amount: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
-    extrude(shape, _extrudeSettings, 0x8080f0, 0, 0, 0, 0, 0, 0, 1);
+    const mesh = extrude(shape, _extrudeSettings, 0x8080f0, 0, 0, 0, 0, 0, 0, 1)
+    object3d.add(mesh);
 }
 
 
@@ -35,5 +36,5 @@ function extrude(shape, extrudeSettings, color, x, y, z, rx, ry, rz, s) {
     mesh.position.set(x, y, z);
     mesh.rotation.set(rx, ry, rz);
     mesh.scale.set(s, s, s);
-    object3d.add(mesh);
+    return mesh
 }

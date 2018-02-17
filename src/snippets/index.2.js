@@ -26,17 +26,29 @@ function YCAD({ cad, scene }) {
     Object.assign(this, {
         render: render,
         change: change,
+        show: show,
+        hide: hide,
         compile: compile,
         getFeatureById: getFeatureById,
         getPart: getPart
     })
 
+    //TODO Dynamic features
+    // const features = {
+    //     plane: plane,
+    //     render: false,
+    //     //path: path,
+    //     //sketch: sketch,
+    //     //line: line,
+    //     insert: insert,
+    //     extrude: extrude,
+    //     pattern: pattern
+    // }
+
     function getFeature(feature) {
         const { type } = feature
         return features[type] || false
-
-        //Future?
-        //return features.filter((elem, key) => { return (key == type) ? elem : false })
+            //return features.filter((elem, key) => { return (key == type) ? elem : false })
     }
 
     function processFeature(feature) {
@@ -50,11 +62,66 @@ function YCAD({ cad, scene }) {
 
         if (!handler) return console.log(`Unknown feature: "${type}"`)
 
-        //Perhaps Y3D handler?
-        y3d.add(feature)
+        handler(payload)
 
-        return handler(payload)
     }
+
+    function processFeatureOld(feature) {
+        const payload = { ycad: self, cadData: cadData, scene: scene, feature: feature, object3d: object3d }
+        const { type } = feature
+
+        switch (type) {
+            case 'plane':
+                plane(payload)
+                break;
+            case 'render':
+                break;
+            case 'path':
+                y3d.path(feature.path)
+                break;
+            case 'sketch':
+                const { path } = feature
+                feature._path = Array() //The compiled version
+
+                //Create rendered sketch
+                for (let k2 in path) {
+                    let point = path[k2]
+                    let _point = { x: point.x, y: point.y }
+                    const { x, y } = point
+
+                    //Process macro
+                    if (isString(x)) {
+                        _point.x = compile(x)
+                    }
+                    if (isString(y)) {
+                        _point.y = compile(y)
+                    }
+
+                    feature._path.push(_point)
+                }
+                break;
+            case 'line':
+                //Add points to scene
+                let p1 = feature.path[0]
+                let p2 = feature.path[1]
+                y3d.line(p1, p2)
+                break;
+
+            case 'insert':
+                insert(payload)
+                break
+
+            case 'extrude':
+                extrude(payload)
+                break
+
+            default:
+                if (debug)
+                    console.log(`Unknown feature: "${type}"`)
+        }
+    }
+
+    //this.getFeatureLabelsOneLevel = getFeatureLabelsOneLevel
 
     function getFeatureById(id) {
         return cadData.features.filter((elem) => { return elem.id == id ? elem : false })[0]
@@ -66,6 +133,12 @@ function YCAD({ cad, scene }) {
 
     this.getParameters = function() { return cadData.parameters || {} }
 
+    /*Returns only the labels of the features
+        [
+            { label: 'Extrude' },
+            { label: 'Cut' }
+        ]
+        */
     this.getFeatureLabels = function() {
         let ret = []
         for (let k in cadData.features) {
@@ -117,6 +190,13 @@ function YCAD({ cad, scene }) {
         return object3d
     }
 
+    //scene.add(object3d)
+    function show(what) { return this; }
+
+    function hide(what) { return this; }
+
+    function sanitize() {}
+
     function compileParameters() {
         if (!cadData) { return console.warn("No CadData") }
         let compiled = ""
@@ -138,6 +218,7 @@ function YCAD({ cad, scene }) {
         cadData.parameters[varname] = value
 
         //Remove old render?
+        //console.log(object3d)
         object3d.children.splice(0, 1)
 
         //Render again

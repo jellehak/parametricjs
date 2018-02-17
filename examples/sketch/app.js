@@ -39,3 +39,6 @@ const mesh = part.render()
 console.log(mesh)
 
 scene.add(mesh)
+
+import testMeshLine from "./assets/testMeshLine.js"
+testMeshLine()
