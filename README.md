@@ -15,4 +15,9 @@ Make modular!
 
 Design Input
 ---
-http://solvespace.com/index.pl
+Open source 2D Solver http://solvespace.com/index.pl
+THREEJS https://threejs.org/docs/scenes/geometry-browser.html#ParametricGeometry
+CSGJS 
+AmmoJs
+
+http://opensourcebim.org/

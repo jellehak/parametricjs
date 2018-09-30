@@ -1,16 +1,28 @@
 {
-    "name": "ycad",
+    "name": "parametricjs",
     "version": "0.0.1",
-    "description": "A 3D javascript engine",
-    "main": "dist/ycad.js",
+    "homepage": "https://jellehak.github.io/mycheckdesk-manager/",
+    "author": "",
+    "description": "Fast CAD web engine",
+    "main": "dist/parametric.js",
+    "module": "src/index.js",
     "scripts": {
-        "build": "webpack --env build --display-modules",
-        "start": "webpack-dev-server --progress --colors --watch --env dev --open"
+        "build": "webpack --env build --display-modules --mode production",
+        "start": "webpack-dev-server --mode development --progress --colors --watch --env dev",
+        "predeploy": "GHPAGE=1 npm run build",
+        "deploy": "gh-pages -d dist"
     },
     "dependencies": {
+        "@babel/core": "^7.1.2",
+        "@tweenjs/tween.js": "^17.2.0",
+        "gh-pages": "^2.0.0",
+        "monaco-editor": "^0.10.1",
         "three": "^0.90.0"
     },
-    "devDependencies": {},
-    "author": "",
+    "devDependencies": {
+        "babel-loader": "^8.0.4",
+        "copy-webpack-plugin": "^4.5.2",
+        "webpack": "^4.20.2"
+    },
     "license": "ISC"
 }

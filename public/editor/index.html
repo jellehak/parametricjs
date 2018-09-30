@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+    <div id='app'>
+            <!-- <v-content> -->
+                <div class='app-toolbar'>
+                    <div>
+                        <v-btn fab dark small color="primary">
+                            <v-icon dark>remove</v-icon>
+                        </v-btn>
+                    </div>
+                    
+                    <!-- <model-selector></model-selector> -->
+                </div>
+
+                <div id='featuretree'>
+                    <featuretree></featuretree>
+                </div>
+
+                <viewer></viewer>
+            <!-- </v-content> -->
+       
+    </div>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/vuex@3.0.1/dist/vuex.js"></script>
+
+    <script src="assets/Tween.min.js"></script>
+    <script src="assets/three.min.js"></script>
+    <script src='assets/y3d.js'></script>
+    <script src='/parametric.js'></script>
+    <script type='module' src='app.js'></script>
+</body>
+
+
+</html>

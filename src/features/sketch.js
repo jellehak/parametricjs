@@ -1,73 +1,59 @@
-import isString from '../helpers/isString'
-import PathToShape from '../helpers/PathToShape'
+import { sketchPath } from './sketchPath'
+import { sketchArray } from './sketchArray'
+import { sketchPoint } from './sketchPoint'
+import { sketchCircle } from './sketchCircle'
+const {THREE} = window
 
-export default function pattern(input) {
-    const { ycad, cadData, scene, feature, object3d } = input;
-    const { compile } = ycad
-    const { selectById, sketchId, settings } = feature
-    const { path, plane } = feature
-
-    console.log(`Creating sketch on plane "${plane}"`)
-
-    let _path = Array() //Create a compiled version
-
-    //Create rendered sketch
-    path.map((point) => {
-        const { x, y } = point
-        //Copy
-        let _point = { x: x, y: y }
-            //Process macro
-        if (isString(x)) {
-            _point.x = compile(x)
-        }
-        if (isString(y)) {
-            _point.y = compile(y)
-        }
-        _path.push(_point)
-    })
-
-    //Finalize
-    const shape = PathToShape(path || pathCompiled)
-    feature._path = _path
-    feature._shape = shape
-
-    //Draw sketch
-    //testPath(scene)
-    var points = shape.getPoints()
-    var geometry = new THREE.BufferGeometry().setFromPoints(points)
-    var lines = new THREE.Line(geometry, material)
-
-    //Place the sketch
-    lines.rotateX(THREE.Math.degToRad(90))
-
-    // mesh.rotateY(0)
-    // mesh.rotateZ(0)
-
-
-    scene.add(lines)
-    console.log(shape)
-
-    //object3d.add(line)
+const sketchFeatures = {
+  path: sketchPath,
+  point: sketchPoint,
+  patharray: sketchArray,
+  circle: sketchCircle
 }
 
-const materialSimple = new THREE.LineBasicMaterial({ color: 0x000000 })
-const material = new THREE.LineBasicMaterial({
-    color: 0x000000,
-    linewidth: 5,
-    linecap: 'round', //ignored by WebGLRenderer
-    linejoin: 'round' //ignored by WebGLRenderer
-});
+export default function (input) {
+  const { ycad, feature } = input
+  const { children = [] } = feature
+  const { path, plane } = feature
 
+  console.log(`Creating sketch on plane "${plane}"`)
 
+  // COMPATIBILITY : Auto promote path to children
+  if (!children && path) {
+    children.push({type: 'path', path: path})
+  }
 
-function testPath(scene) {
-    var path = new THREE.Path()
-    path.lineTo(0, 8)
-    path.quadraticCurveTo(0, 10, 2, 10)
-    path.lineTo(10, 10)
-    var points = path.getPoints()
-    var geometry = new THREE.BufferGeometry().setFromPoints(points)
-    var material = new THREE.LineBasicMaterial({ color: 0x000000 })
-    var line = new THREE.Line(geometry, material)
-    scene.add(line)
+  // Process sketch children
+  const _children = children.map(child => {
+    let {type} = child
+
+    // DETECT : Auto promote path : path, pathsimpel, patharray
+    if (type === 'path') {
+      const {path} = child
+      const [first] = path
+      // console.log(first)
+      type = (first.constructor === Array) ? 'patharray' : 'path'
+    }
+
+    // Skip suppress
+    const {suppress} = child
+    if (suppress) {
+      return
+    }
+
+    const handler = sketchFeatures[type]
+    if (!handler) {
+      console.warn(`Unknown feature: "${type}"`)
+      return
+    }
+
+    // Call sketch feature handler
+    const resp = handler({ ycad, feature: child })
+    const {mesh = {}} = resp
+    return mesh
+  })
+
+  const object3d = new THREE.Object3D()
+  object3d.children = _children.filter(elem => elem)
+  return { mesh: object3d }
 }
