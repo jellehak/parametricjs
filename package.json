@@ -1,9 +1,9 @@
 {
     "name": "parametricjs",
     "version": "0.0.1",
-    "homepage": "https://jellehak.github.io/mycheckdesk-manager/",
-    "author": "",
-    "description": "Fast CAD web engine",
+    "homepage": "https://jellehak.github.io/parametricjs/",
+    "author": "Jelle Hak",
+    "description": "Fast web based CAD engine",
     "main": "dist/parametric.js",
     "module": "src/index.js",
     "scripts": {

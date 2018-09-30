@@ -1,7 +1,6 @@
 // https://github.com/krasimir/webpack-library-starter
 
 // Webpack config for creating libs
-const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
