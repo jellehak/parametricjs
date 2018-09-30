@@ -1,0 +1,51 @@
+html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  body {
+      margin: 0;
+  }
+
+
+  body {
+    margin: 0;
+}
+
+
+
+/* Helpers */
+.h100p { 
+    height: 100%
+}
+
+/* Split.JS */
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=')
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==')
+}
+
+.split,
+.gutter.gutter-horizontal {
+    height: 100%;
+    float: left;
+}
+
+.split {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.gutter.gutter-horizontal {
+    cursor: col-resize;
+  }
