@@ -16,9 +16,9 @@ https://threejs.org/docs/#api/geometries/ShapeGeometry
 }
 */
 
-const {THREE} = window
+const { THREE } = window
 
-export function sketchArray (input) {
+export default (input) => {
   const { feature } = input
   const { path } = feature
 
@@ -41,5 +41,5 @@ export function sketchArray (input) {
     flatShading: true
   })
   var mesh = new THREE.Mesh(geometry, material)
-  return {mesh}
+  return { mesh }
 }

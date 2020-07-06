@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   // entry: './src/index.js',
+  stats: 'minimal',
   output: {
     filename: 'parametric.js',
     // libraryTarget: 'umd',

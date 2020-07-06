@@ -1,11 +1,11 @@
 import extrude from './extrude'
 import { normal } from './materials/mesh.js'
-const {THREE} = window
+const { THREE } = window
 
 export default function cut (input) {
-  const { ycad, ThreeBSP, cadData, scene, feature, object3d } = input
-  const { compile, getFeatureById } = ycad
-  const { selectById, sketchId, amount } = feature
+  const { ycad, ThreeBSP, scene, feature, object3d } = input
+  const { getFeatureById } = ycad
+  const { selectById, sketchId } = feature
 
   // TODO Find first type = mesh
   const toBeCutted = object3d.children.filter(elem => elem.type === 'Mesh')[0] // object3d.children[0]
@@ -31,9 +31,9 @@ export default function cut (input) {
   // object3d.add(meshExtrude) //The cut
 
   // Add edges ?
-  var edges = new THREE.EdgesGeometry(mesh.geometry)
-  var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }))
-  scene.add(line)
+  // var edges = new THREE.EdgesGeometry(mesh.geometry)
+  // var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }))
+  // scene.add(line)
 
   // Hide the previous
   toBeCutted.visible = false

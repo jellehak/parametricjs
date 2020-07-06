@@ -1,5 +1,7 @@
 import Lib from './lib'
 
+export * from './setup'
+
 export function create (args) {
 //   console.log('He')
   return new Lib(args)

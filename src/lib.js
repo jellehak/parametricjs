@@ -1,16 +1,12 @@
-// import build from '../package.json'
 // Features
 import * as features from './features'
 import settings from './settings'
 import { slugify } from './helpers/slugify'
 import ThreeBSP from './web/ThreeCSG/ThreeCSG.es6'
 
-const {THREE} = window
+const { THREE } = window
 
-export default function ({ cad, scene }) {
-// const name = 'ParametricJS'
-  // console.log(`${name} [version ${build.version}]`, features)
-
+export default function (cad = {}) {
   // Private
   var debug = false
   var cadData = cad
@@ -78,7 +74,7 @@ export default function ({ cad, scene }) {
 
   function processFeature (feature = {}) {
     const { type } = feature
-    const payload = { ycad: self, ThreeBSP, cadData, scene, feature, object3d }
+    const payload = { ycad: self, ThreeBSP, cadData, feature, object3d }
 
     // console.log(feature)
 
@@ -86,14 +82,14 @@ export default function ({ cad, scene }) {
     const handler = getFeature(feature)
 
     if (!handler) {
-      console.log(`Unknown feature: "${type}"`)
+      console.warn(`Unknown feature: "${type}"`)
       // TODO Perhaps a Y3D handler?
       return // y3d.add(feature)
     }
 
     // Execute
     try {
-      let mesh = handler(payload) || {}
+      const mesh = handler(payload) || {}
       mesh.name = mesh.name || type
       return mesh
     } catch (err) {
@@ -116,15 +112,15 @@ export default function ({ cad, scene }) {
   function getParameters () { return cadData.parameters || {} }
 
   function getFeatureLabels () {
-    let ret = []
-    for (let k in cadData.features) {
-      let feature = cadData.features[k]
-      let type = feature.type
+    const ret = []
+    for (const k in cadData.features) {
+      const feature = cadData.features[k]
+      const type = feature.type
 
       // TODO Recursive?
       if (type === 'insert') {
-        let part = getPartById(feature.data.selectInnerPart)
-        let featureLabels = getFeatureLabelsOneLevel(part.features)
+        const part = getPartById(feature.data.selectInnerPart)
+        const featureLabels = getFeatureLabelsOneLevel(part.features)
         ret.push({ label: part.title, children: featureLabels })
       } else {
         ret.push({ label: feature.type })
@@ -134,9 +130,9 @@ export default function ({ cad, scene }) {
   }
 
   function getFeatureLabelsOneLevel (features) {
-    let ret = []
-    for (let k in features) {
-      let feature = features[k]
+    const ret = []
+    for (const k in features) {
+      const feature = features[k]
       ret.push({ label: feature.type })
     }
     return ret
@@ -144,8 +140,8 @@ export default function ({ cad, scene }) {
 
   // Returns only the default values as an object
   function getParametersDefault () {
-    let ret = {}
-    for (let k in cadData.parameters) {
+    const ret = {}
+    for (const k in cadData.parameters) {
       ret[k] = cadData.parameters[k].default || cadData.parameters[k]
     }
     return ret
@@ -187,7 +183,7 @@ export default function ({ cad, scene }) {
   // }
 
   function compile (what) {
-    let parameters = `
+    const parameters = `
       let throughall = 1000;
       ${cadData._parameters}; \n 
       ${what}

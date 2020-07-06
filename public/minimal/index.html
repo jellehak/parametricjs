@@ -1,7 +1,56 @@
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+    <h1>Minimal Example</h1>
+    
+    <div id="app" style="width:400px;height:400px;"></div>
+
     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js'></script>
-    <script src='https://rawgit.com/jellehak/Y3D/master/dist/y3d.js'></script>
     <script src='/parametric.js'></script>
-    <script type='module' src='app.js'></script>
+
+    <script>
+        const model = {
+            title: 'Simple box',
+            features: [{
+                id: 'box',
+                type: 'sketch',
+                plane: 'front',
+                path: [{
+                    x: 0,
+                    y: 0
+                }, {
+                    x: 4,
+                    y: 0
+                }, {
+                    x: 4,
+                    y: 4
+                }, {
+                    x: 0,
+                    y: 4
+                }, {
+                    x: 0,
+                    y: 0
+                }]
+            }, {
+                type: 'extrude',
+                selectById: 'box',
+                amount: 4
+            }]
+        }
+
+        // Helper to create threejs scene
+        const {scene} = Parametric.setup({
+            el: 'app',
+            camera: {
+                x: 10,
+                y: 10,
+                z: 10,
+                // ...localStorage.camera ? JSON.parse(localStorage.camera) : {}
+            },
+        })
+
+        // Convert parametric info to mesh
+        const part = Parametric.create(model)
+
+        // Add it to the scene
+        scene.add(part.render())
+    </script>
 </body>
