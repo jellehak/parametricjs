@@ -13,12 +13,12 @@
         triangleShape.lineTo(80, 20); // close path
     */
 
-export default function PathToShape (path) {
-  let shape = new THREE.Shape()
-  let start = path[0]
+export default function PathToShape (path = []) {
+  const shape = new THREE.Shape()
+  const start = path[0]
   shape.moveTo(start.x, start.y)
-  for (let k in path) {
-    let p = path[k]
+  for (const k in path) {
+    const p = path[k]
     shape.lineTo(p.x, p.y)
   }
   shape.lineTo(path[0].x, path[0].y) // Close

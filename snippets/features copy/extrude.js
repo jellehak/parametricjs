@@ -1,5 +1,6 @@
 import PathToShape from '../helpers/PathToShape'
-import { red } from '@/materials/mesh.js'
+import { red } from './materials/mesh.js'
+const { THREE } = window
 
 export default {
   name: 'extrude',
@@ -7,8 +8,7 @@ export default {
   props: {
     entities: {
       title: 'Entities',
-      type: Array,
-      required: true
+      type: Array
     },
     distance: {
       title: 'Distance',
@@ -16,21 +16,23 @@ export default {
     }
   },
 
-  render ({ compile, getFeatureById, feature, THREE } = {}) {
+  created (context) {
+    const { compile, getFeatureById, feature } = context
+
     // Destructure feature
-    const { id, amount } = this
+    const { id, amount, selectById, sketchId } = feature
 
     // Create copy of settings
-    // const _data = Object.create(feature)
-    // Compile Extrude settings?
-    // _data.amount = compile(amount)
+    const _data = Object.create(feature)
 
-    // TODO allow multiple entities
-    const target = getFeatureById(this.entities[0])
+    // Compile Extrude settings?
+    _data.amount = compile(amount)
+
+    const target = getFeatureById(selectById || sketchId)
 
     if (!target) {
-      console.warn(target, this.entities, feature)
-      throw new Error(`[extrude] couldnt find suitable path to extrude`)
+      console.warn(`[extrude] couldnt find suitable path to extrude`, feature)
+      return
     }
 
     // Use static sketch or parametric sketch?

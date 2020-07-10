@@ -1,0 +1,68 @@
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Monospace;
+            font-size: 13px;
+            line-height: 24px;
+            overscroll-behavior: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" style="width:100%;height:100%;"></div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js'></script>
+    <script src='/parametric.js'></script>
+
+    <script>
+        const model = {
+            "title": "Planes",
+            "features": [
+                {
+                    "type": "point",
+                    "on": "origin",
+                },
+                {
+                    "type": "plane",
+                    "on": "top",
+                    "color": "green"
+                },
+                {
+                    "type": "plane",
+                    "on": "front",
+                    "color": "blue"
+                },
+                {
+                    "type": "plane",
+                    "on": "right",
+                    "color": "red"
+                }
+            ]
+        }
+
+        // Helper to create threejs scene
+        const parametric = new ParametricJs({
+            el: 'app',
+            camera: {
+                x: 10,
+                y: 10,
+                z: 10,
+            },
+        })
+        const { scene } = parametric
+
+        // Convert parametric info to mesh
+        // const part = Parametric.create()
+
+        // Add it to the scene
+        scene.add(parametric.render(model))
+    </script>
+</body>
+
+</html>

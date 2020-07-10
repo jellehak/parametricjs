@@ -13,6 +13,11 @@ module.exports = {
     // publicPath: '/dist/',
     // umdNamedDefine: true
   },
+  resolve: {
+    alias: {
+      '@': require('path').resolve(__dirname, 'src/')
+    }
+  },
   devtool: 'source-map',
   module: {
     rules: [
@@ -21,6 +26,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new CopyWebpackPlugin([ { from: './public', to: './' } ])
+    // new CopyWebpackPlugin([ { from: './public', to: './' } ])
   ]
 }

@@ -1,0 +1,66 @@
+{
+  "title": "Simple Pattern",
+  "features": [
+    {
+      "id": "sketch1",
+      "type": "sketch",
+      "plane": "top",
+      "path": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 4,
+          "y": 0
+        },
+        {
+          "x": 4,
+          "y": 4
+        },
+        {
+          "x": 0,
+          "y": 4
+        },
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "type": "extrude",
+      "id": "extrude1",
+      "entities": [
+        "sketch1"
+      ],
+      "amount": 4
+    },
+    {
+      "type": "pattern",
+      "id": "pattern1",
+      "entities": [
+        "extrude1"
+      ],
+      "times": 4,
+      "direction": [
+        10,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "pattern",
+      "id": "pattern2",
+      "entities": [
+        "pattern1"
+      ],
+      "times": 4,
+      "direction": [
+        0,
+        10,
+        0
+      ]
+    }
+  ]
+}

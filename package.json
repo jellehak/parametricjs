@@ -14,14 +14,14 @@
         "docs": "npx browser-sync docs"
     },
     "dependencies": {
+        "@babel/core": "^7.10.4",
         "@tweenjs/tween.js": "^17.3.0",
-        "monaco-editor": "^0.16.2",
-        "three": "^0.103.0"
+        "three": "^0.118.3"
     },
     "devDependencies": {
         "babel-loader": "^8.0.5",
         "copy-webpack-plugin": "^5.0.2",
-        "webpack": "^4.30.0"
+        "webpack": "^4.43.0"
     },
     "license": "ISC"
 }
