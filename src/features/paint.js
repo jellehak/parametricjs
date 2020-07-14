@@ -52,7 +52,7 @@ export default {
     const getMesh = () => {
       const parsedEntities = parseEntities(this.entities)
 
-      console.log(this.entities, parsedEntities)
+      // console.log(this.entities, parsedEntities)
       // return parsedEntities[0]
       return parsedEntities[0].children[0] // TEMP fix
     }
@@ -125,7 +125,8 @@ export default {
     // ==========
     // Setup
     // ==========
-    window.addEventListener('mouseup', function () {
+    window.addEventListener('click', function () {
+      // window.addEventListener('mouseup', function () {
       checkIntersection()
       // if (!moved && intersection.intersects)
       shoot()

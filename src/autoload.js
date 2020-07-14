@@ -8,7 +8,7 @@ const fromEntries = (iterable) => [...iterable].reduce((obj, [key, val]) => {
 */
 // https://webpack.js.org/guides/dependency-management/#require-context
 const requireComponent = require.context(
-  './', // Look for files in the @/components directory
+  './features', // Look for files in the @/components directory
   true, // include subdirectories
   // Only include "_base-" prefixed .vue files
   //   /_base-[\w-]+\.vue$/

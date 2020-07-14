@@ -1,5 +1,5 @@
 import { slugify } from './helpers/slugify'
-import features from './features/autoload'
+import features from './autoload'
 // import * as features from './features'
 import ThreeBSP from './helpers/threeCSG.js'
 import { setup } from './setup'
@@ -144,6 +144,13 @@ export class ParametricJs {
     this.selection = []
   }
 
+  // ===========
+  // Feature
+  getFeatureMeta (feature = '') {
+    return this.featureHandlers[feature]
+  }
+
+  // ===========
   // Interactions
   set (what) {
     const to = this.model
@@ -252,8 +259,8 @@ export class ParametricJs {
       throw new Error(`No render function found for feature: "${type}"`)
     }
 
-    const getFeatureById = (id) => {
-      const found = features.find((elem) => { return elem.id === id })
+    const getFeatureById = (id, source = features) => {
+      const found = source.find((elem) => { return elem.id === id })
       if (!found) {
         console.warn(features)
         throw new Error(`Could not find feature by id: ${id}`)
@@ -281,10 +288,11 @@ export class ParametricJs {
         return isSpecial()
       }
 
-      const feature = getFeatureById(mixed)
-      console.log('feature', feature)
-      // return isSpecial ? isSpecial() : this.model.getObjectByName(mixed)
       // HACKY
+      const feature = getFeatureById(mixed, this.richFeatures)
+      // console.log('feature', feature)
+      // console.log('richFeatures', this.richFeatures)
+      // return isSpecial ? isSpecial() : this.model.getObjectByName(mixed)
       return feature._mesh
     }
 
@@ -295,9 +303,9 @@ export class ParametricJs {
      */
     const parseEntities = (entities = []) => {
       // Handle entities specials like $all
-      console.log('parseEntities', entities)
+      // console.log('parseEntities', entities)
       const resp = entities.map(parseEntity)
-      console.log(resp)
+      // console.log(resp)
       return resp
     }
 
@@ -360,7 +368,7 @@ export class ParametricJs {
     const livePart = createObject({
       name: 'features'
     })
-    console.log('livePart', livePart)
+    // console.log('livePart', livePart)
 
     // Compile global cad parameters (adds cadData._parameters)
     compileParameters(cadData)
@@ -369,7 +377,7 @@ export class ParametricJs {
     const { features = [] } = cadData
 
     // Clone features ( richFeatures contains references to the scene )
-    const richFeatures = [...features]
+    const richFeatures = features.map(elem => ({ ...elem }))
 
     features.map(async (feature, i) => {
       // Skip suppress features
@@ -399,14 +407,14 @@ export class ParametricJs {
       richFeatures[i]._mesh = featurePlaceholderObject
     })
 
-    console.log('richFeatures', richFeatures)
+    // console.log('richFeatures', richFeatures)
 
     // # Give the object3d a nice name
     // livePart.name = slugify(cadData.name) || slugify(cadData.title) || 'unnamed'
     // livePart.name = 'features'
 
     // Expose scene features
-    this.features = features
+    this.richFeatures = richFeatures
 
     return livePart
   }
