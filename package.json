@@ -7,18 +7,18 @@
     "main": "dist/parametric.js",
     "module": "src/index.js",
     "scripts": {
-        "build": "webpack --env build --display-modules --mode production",
-        "start": "webpack-dev-server --mode development --hide-modules",
+        "build": "npx webpack --env build --display-modules --mode production",
+        "start": "npx webpack-dev-server --mode development --hide-modules",
         "predeploy": "GHPAGE=1 npm run build",
         "deploy": "gh-pages -d dist",
         "docs": "npx browser-sync docs"
     },
     "dependencies": {
-        "@babel/core": "^7.10.4",
         "@tweenjs/tween.js": "^17.3.0",
         "three": "^0.118.3"
     },
     "devDependencies": {
+        "@babel/core": "^7.10.4",
         "babel-loader": "^8.0.5",
         "copy-webpack-plugin": "^5.0.2",
         "webpack": "^4.43.0"

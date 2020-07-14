@@ -1,6 +1,3 @@
-import PathToShape from '../helpers/PathToShape'
-import { red } from '@/materials/mesh.js'
-
 export default {
   name: 'extrude',
 
@@ -13,10 +10,15 @@ export default {
     distance: {
       title: 'Distance',
       type: Number
+    },
+    material: {
+      title: 'Material',
+      type: 'Material',
+      default: 'blue'
     }
   },
 
-  render ({ compile, getFeatureById, feature, THREE } = {}) {
+  render ({ compile, PathToShape, getMaterial, getFeatureById, feature, THREE } = {}) {
     // Destructure feature
     const { id, amount } = this
 
@@ -34,6 +36,7 @@ export default {
     }
 
     // Use static sketch or parametric sketch?
+    // TODO use `this.entities`
     const { path, _path: pathCompiled } = target
 
     // Get Shape
@@ -43,15 +46,35 @@ export default {
     // console.log(`Extruding with ${amount}`)
 
     // Extrude
-    // const extrudeSettingsMerged = Object.assign(extrudeSettings, { amount: 8, bevelEnabled: false, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1 })
-    const material = red
-    const geometry = new THREE.ExtrudeGeometry(shape, { amount, bevelEnabled: false })
-    const mesh = new THREE.Mesh(geometry, material)
+    // const material = red
+    const geometry = new THREE.ExtrudeGeometry(shape,
+      {
+        // amount: 8, bevelEnabled: false, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1
+        depth: amount,
+        bevelEnabled: false
+      }
+    )
 
+    const group = new THREE.Object3D()
     // Attach mesh to the feature
-    mesh.name = `[extrude]${id}`
-    feature._mesh = mesh
+    group.name = `[extrude]${id}`
+    // feature._mesh = mesh
 
-    return { mesh }
+    const mesh = new THREE.Mesh(geometry, getMaterial(this.material))
+    mesh.name = `[extrude/mesh]${id}`
+    group.add(mesh)
+
+    // Edges
+    var edges = new THREE.EdgesGeometry(geometry)
+    var line = new THREE.Line(edges, new THREE.LineBasicMaterial({ color: 'black' }))
+    // var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 'black' }))
+    group.name = `[extrude/lines]${id}`
+    group.add(line)
+
+    // TEST Highlight edge
+    line.material.color = new THREE.Color('red')
+    line.material.needsUpdate = true
+
+    return group
   }
 }

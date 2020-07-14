@@ -1,7 +1,7 @@
 // https://github.com/krasimir/webpack-library-starter
 
 // Webpack config for creating libs
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+// const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   // entry: './src/index.js',
@@ -22,7 +22,7 @@ module.exports = {
   module: {
     rules: [
       // { test: /\.js|es6$/, exclude: /node_modules/ }
-      { test: /\.js|es6$/, exclude: /node_modules/, loader: 'babel-loader' }
+      // { test: /\.js|es6$/, exclude: /node_modules/, loader: 'babel-loader' }
     ]
   },
   plugins: [

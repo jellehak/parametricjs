@@ -1,6 +1,6 @@
-import isString from '@/helpers/isString'
-import PathToShape from '@/helpers/PathToShape'
-import { normal } from '@/materials/lines.js'
+import isString from '../../helpers/isString'
+import PathToShape from '../../helpers/PathToShape'
+import { normal } from '../../materials/lines.js'
 
 export default {
   name: 'sketch-path',

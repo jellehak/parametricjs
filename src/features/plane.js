@@ -24,7 +24,7 @@ export default {
   },
 
   render ({ THREE, scene }) {
-    console.log(`Create plane on ${this.on}`)
+    // console.log(`Create plane on ${this.on}`)
 
     // ============
     // Text (https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_text_shapes.html)
@@ -58,7 +58,7 @@ export default {
     // Create Root element
     const group = new THREE.Object3D()
     group.name = 'planegroup'
-    scene.add(group)
+    // scene.add(group)
 
     // Custom handler
     group.selection = (e) => {
@@ -146,6 +146,8 @@ export default {
 
     // Set position
     DEFAULTS_POSITIONS[this.on](group)
+
+    return group
   }
 
 }

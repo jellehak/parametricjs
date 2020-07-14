@@ -1,4 +1,4 @@
-/* jshint esversion: 6 */
+const { THREE } = window
 
 const EPSILON = 1e-5
 const COPLANAR = 0
@@ -9,11 +9,11 @@ const SPANNING = 3
 export default class ThreeBSP {
   constructor (geometry) {
     // Convert THREE.Geometry to ThreeBSP
-    var i; var _length_i
+    var i
+    var _length_i
     var face; var vertex; var faceVertexUvs; var uvs
     var polygon
     var polygons = []
-    var tree
 
     this.Polygon = Polygon
     this.Vertex = Vertex
@@ -81,7 +81,7 @@ export default class ThreeBSP {
         vertex.applyMatrix4(this.matrix)
         polygon.vertices.push(vertex)
       } else {
-        throw 'Invalid face type at index ' + i
+        throw new Error('Invalid face type at index ' + i)
       }
 
       polygon.calculateProperties()
@@ -91,9 +91,9 @@ export default class ThreeBSP {
     this.tree = new Node(polygons)
   }
 
-  subtract (other_tree) {
+  subtract (otherTree) {
     var a = this.tree.clone()
-    var b = other_tree.tree.clone()
+    var b = otherTree.tree.clone()
 
     a.invert()
     a.clipTo(b)
@@ -108,9 +108,9 @@ export default class ThreeBSP {
     return a
   }
 
-  union (other_tree) {
+  union (otherTree) {
     var a = this.tree.clone()
-    var b = other_tree.tree.clone()
+    var b = otherTree.tree.clone()
 
     a.clipTo(b)
     b.clipTo(a)
@@ -123,9 +123,9 @@ export default class ThreeBSP {
     return a
   }
 
-  intersect (other_tree) {
+  intersect (otherTree) {
     var a = this.tree.clone()
-    var b = other_tree.tree.clone()
+    var b = otherTree.tree.clone()
 
     a.invert()
     b.clipTo(a)

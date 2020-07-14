@@ -1,4 +1,4 @@
-import { normal, red } from '@/materials/mesh.js'
+import { normal, red } from '../materials/mesh.js'
 
 export default {
   name: 'cut',
@@ -22,7 +22,7 @@ export default {
   },
 
   render (context = {}) {
-    const { getFeatureById, THREE, PathToShape, ThreeBSP, previousState, feature, object3d } = context
+    const { getFeatureById, THREE, PathToShape, ThreeBSP, previousState, feature } = context
 
     // TODO Find first type = mesh
     console.log(previousState)
