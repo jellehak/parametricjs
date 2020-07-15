@@ -156,7 +156,7 @@ export class ParametricJs {
    * @param {*} previousState
    * @returns {Mesh} generate mesh of a single feature
    */
-  async createFeature (featureNode = {}, { livePart, features }) {
+  async processFeature (featureNode = {}, { livePart, features }) {
     const { type } = featureNode
 
     // Find handler according to feature name
@@ -223,7 +223,6 @@ export class ParametricJs {
 
     // Get render Fn
     const renderFn = component.render
-
     // Call render fn
     const mesh = await renderFn(payload, livePart) || {}
     // mesh.name = mesh.name || type
