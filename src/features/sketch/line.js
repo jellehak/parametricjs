@@ -28,7 +28,13 @@ export default {
     }
   },
 
-  render ({ compile, THREE, feature } = {}) {
+  render ({ compile, THREE, getMouse, feature } = {}) {
+    window.addEventListener('click', function () {
+      const mouse = getMouse()
+      console.log(mouse)
+    })
+
+    // = ==============
     const materials = {
       normal: new THREE.LineBasicMaterial({ color: 0x000000 })
     }

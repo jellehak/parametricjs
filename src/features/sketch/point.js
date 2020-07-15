@@ -27,5 +27,5 @@ export default (context = {}) => {
   //   })
   // )
 
-  return { mesh }
+  return mesh
 }

@@ -6,8 +6,10 @@ export default {
 
   props: {
     entities: {
+      type: 'Entities',
       title: 'entities',
-      default: ['$previous']
+      default: () => ([])
+      // default: () => (['$previous']) // FIX
     },
     color: {
       title: 'color',
@@ -15,7 +17,7 @@ export default {
     }
   },
 
-  async render ({ getMouse, camera, THREE, parseEntities, raycaster }, previousState) {
+  async render ({ destroy, addEventListener, getMouse, camera, THREE, parseEntities, raycaster }, previousState) {
     // const parsedEntities = parseEntities(this.entities)
 
     // ==========
@@ -45,6 +47,7 @@ export default {
     }
     var mouseHelper
     var line
+    var decals = []
 
     // ==========
     // Helpers
@@ -122,14 +125,28 @@ export default {
       }
     }
 
-    // ==========
-    // Setup
-    // ==========
-    window.addEventListener('click', function () {
+    const handleClick = () => {
+      // Do only when scope is set
+      if (!this.entities || this.entities.length === 0) {
+        console.warn('No entities set', this.entities, this)
+        return
+      } else {
+        console.warn('Painting', this.entities, this)
+      }
       // window.addEventListener('mouseup', function () {
       checkIntersection()
       // if (!moved && intersection.intersects)
       shoot()
+    }
+
+    // ==========
+    // Setup
+    // ==========
+    // # Events
+    addEventListener('click', handleClick)
+
+    destroy(() => {
+      removeEventListener('click', handleClick)
     })
 
     var textureLoader = new THREE.TextureLoader()
@@ -148,8 +165,6 @@ export default {
       polygonOffsetFactor: -4,
       wireframe: false
     })
-
-    var decals = []
 
     // Create Group
     const group = new THREE.Object3D()

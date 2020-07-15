@@ -2,7 +2,7 @@
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
 
 export default {
-  name: 'paint',
+  name: 'paintrandom',
 
   props: {
     entities: {

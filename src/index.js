@@ -1,5 +1,5 @@
-import { slugify } from './helpers/slugify'
 import features from './autoload'
+import Feature from './Feature'
 // import * as features from './features'
 import ThreeBSP from './helpers/threeCSG.js'
 import { setup } from './setup'
@@ -7,65 +7,15 @@ import materials from './materials/index.js'
 import PathToShape from './helpers/PathToShape'
 // Re-export some parts from THREE
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
-
+import { compileParameters, parseEntity, computeMouseXY, getFeatureHandler, getFeatureById, getFeatureHandlerById, createObject } from './helpers'
 export * from './setup'
 
 const { THREE } = window
 
-// ============
-// Helpers
-// ============
-export const getFeatureHandler = (features = []) => (name = '') => {
-  const found = features[name]
-  // console.log(name, found, features)
-
-  return found || false
-}
-
-export const createObject = (settings, Type = THREE.Object3D) => {
-  const obj = new Type()
-  return Object.assign(obj, settings)
-}
-
-const computeMouseXY = (domElement = window) => (e = {}) => {
-  // return {
-  //   x: (e.clientX / window.innerWidth) * 2 - 1,
-  //   y: -(e.clientY / window.innerHeight) * 2 + 1
-  // }
-  const element = domElement.getBoundingClientRect() // renderer.domElement.getBoundingClientRect()
-  const { left, top, width, bottom } = element
-  return {
-    x: ((e.clientX - left) / (width - left)) * 2 - 1,
-    y: -((e.clientY - top) / (bottom - top)) * 2 + 1
+const clearThreeScene = (obj3d = {}) => {
+  while (obj3d.children.length > 0) {
+    obj3d.remove(obj3d.children[0])
   }
-}
-
-// Compiler
-const compileParameters = (parameters = []) => {
-  const code = parameters || [].map((elem, key) => {
-    const value = parameters[key]
-    return `let ${key} = ${value};`
-  }).join('\n')
-
-  // cache compiled parameters
-  // cadData._parameters = code // || "height=10;width=3;thickness=1";
-  // Return
-  return code
-}
-
-export const compile = (_parameters = '') => (what = '') => {
-  const parameters = `
-    let throughall = 1000;
-    ${_parameters}; \n 
-    ${what}
-    `
-
-  // eslint-disable-next-line no-eval
-  return eval(parameters)
-}
-
-const getFeatureHandlerById = (features = []) => (id = '') => {
-  return features.filter((elem) => { return elem.id === id ? elem : false })[0]
 }
 
 /**
@@ -91,24 +41,11 @@ export class ParametricJs {
     const { scene, camera, mouse, renderer, controls, element, raycast } = setup(options)
     const orbit = controls
 
-    // Test Objects
-    // var geometry = new THREE.BoxBufferGeometry(200, 200, 200)
-    // var material = new THREE.MeshLambertMaterial({ transparent: true })
-    // var mesh = new THREE.Mesh(geometry, material)
-    // scene.add(mesh)
-    // scene.add(new THREE.GridHelper(1000, 10))
-
-    // Add default features
-    // studio
-    // this.processFeature({ type: 'normal' })
-
     // # TransformControls
     const transformControls = new TransformControls(camera, renderer.domElement)
     transformControls.addEventListener('dragging-changed', function (event) {
       orbit.enabled = !event.value
     })
-    // transformControls.attach(mesh)
-    // scene.add(transformControls)
 
     // # Add parent for the model
     const model = new THREE.Object3D()
@@ -137,7 +74,8 @@ export class ParametricJs {
         raycast,
         renderer,
         materials,
-        transformControls
+        transformControls,
+        featureMeshLookup: [] // Set by render()
       })
 
     // State
@@ -152,17 +90,28 @@ export class ParametricJs {
 
   // ===========
   // Interactions
-  set (what) {
+  clear () {
+    // Clear object3d
+
+  }
+
+  /**
+   * Set a new model to the scene. It renders to a child of the root scene
+   * @param {{}} what
+   */
+  set (what = {}) {
+    // The Object3D to use
     const to = this.model
 
-    // Clear object3d
-    const clear = (obj3d) => {
-      while (obj3d.children.length > 0) {
-        obj3d.remove(obj3d.children[0])
-      }
-    }
+    // # Clear process (TODO move to clear())
+    // Call all destroy handlers (TODO use flattened feature tree)
+    this.featureMeshLookup.map(feature => {
+      console.log(feature)
+    })
+    // Remove from THREE
+    clearThreeScene(to)
 
-    clear(to)
+    // Add to scene
     to.add(what)
   }
 
@@ -207,118 +156,42 @@ export class ParametricJs {
    * @param {*} previousState
    * @returns {Mesh} generate mesh of a single feature
    */
-  async processFeature (feature = {}, { featurePlaceholderObject, livePart, features }) {
-    const { type } = feature
+  async createFeature (featureNode = {}, { livePart, features }) {
+    const { type } = featureNode
 
     // Find handler according to feature name
-    const featureHandler = getFeatureHandler(this.featureHandlersLookup)(feature.type)
+    const featureHandler = getFeatureHandler(this.featureHandlersLookup)(featureNode.type)
 
-    // FeatureHandler Blueprint
-    function FeatureHandler (featureHandler = {}, feature = {}) {
-      if (!featureHandler) {
-        throw new Error(`No featureHandler found for feature: "${type}"`)
-      }
-
-      // ===========
-      // Validate props
-      const { props = {} } = featureHandler
-      const propsArray = Object.entries(props).map(([key, value]) => ({ key, ...value }))
-      // Validation: required props
-      const requiredProps = propsArray.filter(elem => elem.required === true)
-      requiredProps.map(elem => {
-        if (!feature[elem.key]) {
-          console.warn(feature)
-          throw new Error(`Feature property "${elem.key}" is required`)
-        }
-      })
-      // ===========
-      // Get all prop defaults
-      const defaults = Object.fromEntries(
-        propsArray.map(elem => ([elem.key, elem.default]))
-      )
-      // console.log('defaults props', defaults)
-
-      // Set properties to allow: E.g. ```this.entities = ['cutsketch']```
-      Object.assign(this, defaults, feature)
-
-      // Attach render function
-      const { render } = featureHandler
-      this.render = render.bind(this)
+    if (!featureHandler) {
+      throw new Error(`No featureHandler found for feature: "${type}"`)
     }
 
     // Create new object from feature blueprint
-    const component = new FeatureHandler(featureHandler, feature)
-
-    // Debug
-    // console.log(component)
-
-    // Get render Fn
-    const renderFn = component.render
-
-    if (!renderFn) {
-      throw new Error(`No render function found for feature: "${type}"`)
-    }
-
-    const getFeatureById = (id, source = features) => {
-      const found = source.find((elem) => { return elem.id === id })
-      if (!found) {
-        console.warn(features)
-        throw new Error(`Could not find feature by id: ${id}`)
-      }
-      return found
-    }
-
-    /**
-     * Convert an entity to THREE
-     * 'human' => THREE.Object
-     * @param {*} entities
-     */
-    const parseEntity = mixed => {
-      const SPECIALS = {
-        $all: () => livePart,
-        $previous: () => {
-          const index = livePart.children.length - 1
-          // console.log(livePart, [...livePart.children], index)
-          return livePart.children[index]
-        }
-      }
-      const isSpecial = SPECIALS[mixed]
-
-      if (isSpecial) {
-        return isSpecial()
-      }
-
-      // HACKY
-      const feature = getFeatureById(mixed, this.richFeatures)
-      // console.log('feature', feature)
-      // console.log('richFeatures', this.richFeatures)
-      // return isSpecial ? isSpecial() : this.model.getObjectByName(mixed)
-      return feature._mesh
-    }
-
-    /**
-     * Convert entities array to a THREE array
-     * ['human','$previous'] => [THREE.Object, THREE.Object]
-     * @param {*} entities
-     */
-    const parseEntities = (entities = []) => {
-      // Handle entities specials like $all
-      // console.log('parseEntities', entities)
-      const resp = entities.map(parseEntity)
-      // console.log(resp)
-      return resp
-    }
+    const component = new Feature(featureHandler, featureNode)
 
     // The context for a feature
     const payload = {
       ...this,
+
+      // Register LifeCycle hook
+      destroy: (cb) => {
+        // TODO
+        this.destroy = cb
+      },
+      addEventListener: this.renderer.domElement.addEventListener,
       // Mock scene
       scene: new THREE.Object3D(),
       rootScene: this.scene,
-      feature,
+      feature: featureNode, // Deprecate ?
       THREE,
-      // Returns the scene meshes
-      parseEntities,
+      // Returns the scene meshes from features
+      parseEntities: (entities = []) => {
+        return entities.map(parseEntity({
+          livePart,
+          featureMeshLookup: this.featureMeshLookup // HACKY
+        }))
+      // createParseEntities(livePart),
+      },
       createModelLoader: loader => (url) => {
         return new Promise((resolve, reject) => {
           loader.load(url, data => resolve(data), null, reject)
@@ -348,6 +221,9 @@ export class ParametricJs {
       getFeatureById
     }
 
+    // Get render Fn
+    const renderFn = component.render
+
     // Call render fn
     const mesh = await renderFn(payload, livePart) || {}
     // mesh.name = mesh.name || type
@@ -359,7 +235,11 @@ export class ParametricJs {
     return this.element.addEventListener(event, cb)
   }
 
-  async render (cadData = {}) {
+  /**
+   * Convert the features to a THREE js mesh
+   * @param {*} cadData
+   */
+  async render (cadData = { features: [] }) {
     if (!cadData) {
       throw new Error('No CadData')
     }
@@ -370,14 +250,14 @@ export class ParametricJs {
     })
     // console.log('livePart', livePart)
 
-    // Compile global cad parameters (adds cadData._parameters)
+    // Compile global parameters (adds cadData._parameters)
     compileParameters(cadData)
 
     // # Process each feature
     const { features = [] } = cadData
 
-    // Clone features ( richFeatures contains references to the scene )
-    const richFeatures = features.map(elem => ({ ...elem }))
+    // Clone features ( featureMeshLookup contains references to the scene )
+    const featureMeshLookup = features.map(elem => ({ ...elem }))
 
     features.map(async (feature, i) => {
       // Skip suppress features
@@ -395,26 +275,22 @@ export class ParametricJs {
       livePart.add(featurePlaceholderObject)
 
       // Run feature
-      const mesh = await this.processFeature(feature, { featurePlaceholderObject, livePart, features }) || {}
+      const mesh = await this.processFeature(
+        feature,
+        { featurePlaceholderObject, livePart, features })
 
       // Add to the livePart, so upcoming feature can use the mesh
       if (mesh) {
         featurePlaceholderObject.add(mesh)
-        // livePart.add(mesh)
       }
 
-      // Mutate richFeatures
-      richFeatures[i]._mesh = featurePlaceholderObject
+      // Mutate featureMeshLookup
+      featureMeshLookup[i]._mesh = featurePlaceholderObject
+      featureMeshLookup[i]._handler = featurePlaceholderObject
     })
 
-    // console.log('richFeatures', richFeatures)
-
-    // # Give the object3d a nice name
-    // livePart.name = slugify(cadData.name) || slugify(cadData.title) || 'unnamed'
-    // livePart.name = 'features'
-
     // Expose scene features
-    this.richFeatures = richFeatures
+    this.featureMeshLookup = featureMeshLookup
 
     return livePart
   }

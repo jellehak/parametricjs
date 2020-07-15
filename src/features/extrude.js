@@ -4,12 +4,13 @@ export default {
   props: {
     entities: {
       title: 'Entities',
-      type: Array,
+      type: 'Array',
       required: true
     },
     distance: {
       title: 'Distance',
-      type: Number
+      type: 'Number',
+      default: 1
     },
     material: {
       title: 'Material',
@@ -20,12 +21,12 @@ export default {
 
   render ({ compile, PathToShape, getMaterial, getFeatureById, feature, THREE } = {}) {
     // Destructure feature
-    const { id, amount } = this
+    const { id, distance } = this
 
     // Create copy of settings
     // const _data = Object.create(feature)
     // Compile Extrude settings?
-    // _data.amount = compile(amount)
+    // _data.distance = compile(distance)
 
     // TODO allow multiple entities
     const target = getFeatureById(this.entities[0])
@@ -43,14 +44,14 @@ export default {
     const shape = feature._shape || PathToShape(path || pathCompiled)
 
     // Debug
-    // console.log(`Extruding with ${amount}`)
+    // console.log(`Extruding with ${distance}`)
 
     // Extrude
     // const material = red
     const geometry = new THREE.ExtrudeGeometry(shape,
       {
-        // amount: 8, bevelEnabled: false, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1
-        depth: amount,
+        // distance: 8, bevelEnabled: false, bevelSegments: 2, steps: 2, bevelSize: 0, bevelThickness: 1
+        depth: distance,
         bevelEnabled: false
       }
     )

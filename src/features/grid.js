@@ -6,7 +6,12 @@ export default {
     distance: {
       title: 'Distance',
       type: Number,
-      default: 100
+      default: 10
+    },
+    segments: {
+      title: 'Segments',
+      type: Number,
+      default: 10
     }
   },
 
@@ -15,7 +20,7 @@ export default {
   },
 
   render ({ THREE, scene }) {
-    return new THREE.GridHelper(this.distance, 10)
+    return new THREE.GridHelper(this.distance, this.segments)
   }
 
 }

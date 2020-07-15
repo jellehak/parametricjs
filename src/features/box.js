@@ -2,24 +2,20 @@ export default {
   name: 'box',
 
   props: {
-    entities: {
-      title: 'Entities',
-      type: Array
-    },
     width: {
-      type: Number,
+      type: 'Number',
       default: 10
     },
     height: {
-      type: Number,
+      type: 'Number',
       default: 10
     },
     depth: {
-      type: Number,
+      type: 'Number',
       default: 10
     },
     color: {
-      type: 'String',
+      type: 'Color',
       default: 'blue'
     }
   },

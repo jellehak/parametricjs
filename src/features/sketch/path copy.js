@@ -1,10 +1,15 @@
 import isString from '../../helpers/isString'
 import PathToShape from '../../helpers/PathToShape'
+import { normal } from '../../materials/lines.js'
 
 export default {
   name: 'sketch-path',
 
   props: {
+    // entities: {
+    //   title: 'Entities',
+    //   type: Array
+    // },
     values: {
       type: Array,
       default: () => (
@@ -29,10 +34,7 @@ export default {
   },
 
   render ({ compile, THREE, feature } = {}) {
-    const materials = {
-      normal: new THREE.LineBasicMaterial({ color: 0x000000 })
-    }
-
+    const material = normal
     const { values } = this
 
     // Create rendered sketch
@@ -50,20 +52,30 @@ export default {
     feature._path = _path
     feature._shape = shape
 
-    // # Collect points
-    // var points = shape.getPoints()
-    // TEST
-    var points = []
-    points.push(new THREE.Vector3(-10, 0, 0))
-    points.push(new THREE.Vector3(0, 10, 0))
-    points.push(new THREE.Vector3(10, 0, 0))
-
-    // # Create mesh
-    console.log(points)
+    // Draw sketch
+    var points = shape.getPoints()
     var geometry = new THREE.BufferGeometry().setFromPoints(points)
+    var lines = new THREE.Line(geometry, material)
 
-    var lines = new THREE.Line(geometry, materials.normal)
-    lines.name = 'lines'
+    // Place the sketch
+    // lines.rotateX(THREE.Math.degToRad(90))
+    // mesh.rotateY(0)
+    // mesh.rotateZ(0)
+
+    // Fill shape
+    // if (sketchFill) {
+    //   var geometry2 = new THREE.ShapeGeometry(shape)
+    //   var material2 = new THREE.MeshPhongMaterial({
+    //     color: Math.random() * 0xffffff,
+    //     emissive: 0x072534,
+    //     side: THREE.DoubleSide,
+    //     flatShading: true
+    //   })
+    //   var mesh = new THREE.Mesh(geometry2, material2)
+    //   scene.add(mesh)
+    // }
+
+    // scene.add(lines)
     return lines
   }
 }

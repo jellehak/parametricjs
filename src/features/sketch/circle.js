@@ -39,7 +39,7 @@ export default (context = {}) => {
   mesh.position.x = x
   mesh.position.y = y
   mesh.name = name || 'circle'
-  return { mesh }
+  return mesh
 }
 
 // var geometry = new THREE.CircleGeometry(5, 32)

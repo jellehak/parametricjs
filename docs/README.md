@@ -46,7 +46,6 @@ Include the libary
 
 
 # Examples
-
 [link](/examples/debug ':ignore')
 
 

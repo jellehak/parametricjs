@@ -1,18 +1,13 @@
 // https://threejs.org/docs/scenes/geometry-browser.html#PlaneGeometry
 
 export default {
-  name: 'point',
+  name: 'origin',
 
   props: {
-    on: {
-      title: 'On',
-      default: 'front',
-      required: true
-    },
     color: {
       title: 'Color',
       type: String,
-      default: 'red'
+      default: 'black'
     }
   },
 
@@ -41,18 +36,9 @@ export default {
       return texture
     }
 
-    // var sprite = new THREE.TextureLoader().load('/textures/sprites/disc.png')
-
-    // const geometry = new THREE.BufferGeometry()
-    // const material = new THREE.PointsMaterial({ size: 35, sizeAttenuation: false, map: sprite, alphaTest: 0.5, transparent: true })
-    // material.color.setHSL(1.0, 0.3, 0.7)
-
-    // var particles = new THREE.Points(geometry, material)
-    // scene.add(particles)
-
     var pointMaterial = new THREE.PointsMaterial({
       size: 1,
-      map: createCircleTexture('#00ff00', 256),
+      map: createCircleTexture(this.color, 256),
       transparent: true,
       depthWrite: false
     })
@@ -60,16 +46,11 @@ export default {
     var pointGeometry = new THREE.Geometry()
     pointGeometry.vertices.push(
       new THREE.Vector3(0, 0, 0)
-      // new THREE.Vector3(0, 2, 0),
     )
-    // var pointMaterial = new THREE.PointsMaterial({
-    //   color: 0x888888,
-    //   size: 1
-    // })
 
     const point = new THREE.Points(pointGeometry, pointMaterial)
-    point.name = 'point'
-    scene.add(point)
+    point.name = 'origin'
+    return point
   }
 
 }
