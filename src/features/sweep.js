@@ -1,5 +1,5 @@
 export default {
-  name: 'extrude',
+  name: 'sweep',
 
   props: {
     entities: {

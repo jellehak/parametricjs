@@ -1,0 +1,102 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <h1>Minimal Example</h1>
+
+    <div id="app" style="width:100%;min-height:400px">
+        loading...
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js'></script>
+    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js'></script> -->
+    <script src='/parametric.js'></script>
+
+    <script>
+        const { Scene, Feature, Part } = ParametricJs
+
+        const scene = new Scene({
+            el: 'app',
+            camera: {
+                x: 10,
+                y: 10,
+                z: 10
+            }
+        })
+
+        // Create features
+        const feature1 = new Feature({
+            id: 'box',
+            type: 'path',
+            plane: 'front',
+            path: [
+                {
+                    x: 0,
+                    y: 0
+                }, {
+                    x: 4,
+                    y: 0
+                }, {
+                    x: 4,
+                    y: 4
+                }, {
+                    x: 0,
+                    y: 4
+                }, {
+                    x: 0,
+                    y: 0
+                }
+            ]
+        })
+
+        const feature2 = new Feature({
+            type: 'extrude',
+            distance: 4,
+            entities: ['box']
+        })
+
+        // Log features
+        console.log("Features", {
+            feature1,
+            feature2
+        })
+
+        // Debug a feature with methods
+        console.log('Retrieve single shape from feature', feature1.getShape())
+
+        // Compile all features
+        const part = new Part([
+            feature1,
+            // feature2
+        ])
+        console.log(part)
+        console.log('Part render', part.render())
+
+        // Add it to the scene
+        scene.add(
+            part.render({ height: 10 })
+        )
+
+        // ==========
+        // RAW THREE ACCESS
+        // Flatten all scene objects
+        console.log("SCENE")
+        scene.scene.traverse(function (child) {
+            console.log(child)
+        });
+
+        // Flatten all features
+        console.log("FEATURES")
+        scene.scene.getObjectByName('features').traverse(function (child) {
+            console.log(child)
+        });
+        // ==========
+
+
+    </script>
+</body>
+
+</html>

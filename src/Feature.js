@@ -1,97 +1,154 @@
-import { createParseEntity, getFeatureById, getFeatureHandlerById } from './helpers'
+import { uid, createParseEntity, getFeatureById, getFeatureHandlerById } from './helpers/helpers'
 const { THREE } = window
+
+const FEATURE = {
+  id: '',
+  type: '',
+  name: '',
+  props: {},
+  // Internals
+  $shapes: [],
+  // Methods
+  render () { },
+  destroy () { }
+}
+
+const validateProps = feature => (propsArray = []) => {
+  const requiredProps = propsArray.filter(elem => elem.required === true)
+  requiredProps.map(elem => {
+    if (!feature[elem.key]) {
+      throw new Error(`Feature property "${elem.key}" is required for feature "${elem.name}"`)
+    }
+    return feature[elem.key]
+  })
+}
+
+/**
+ * Function
+ * @param {array} propsArray
+ */
+const getDefaultProps = (propsArray = []) => {
+  return Object.fromEntries(
+    propsArray.map(elem => {
+      // console.log(elem.defaults)
+      return [
+        elem.key,
+        typeof elem.default === 'function'
+          ? elem.default()
+          : elem.default
+      ]
+    })
+  )
+}
 
 /**
  * Function to validate props and set defaults of a Feature
  * @param {*} featureHandler
  * @param {*} feature
  */
-export default function Feature (handler = {}, feature = {}, parametric = null, features = []) {
+export default function Feature (_feature = FEATURE) {
+  console.log(_feature)
+
+  // Merge with defaults
+  const feature = {
+    id: uid(),
+    ...FEATURE,
+    name: _feature.type,
+    ..._feature
+  }
+  // console.log(feature)
+
+  // # Validate props
+  const { props = {} } = feature
+  const propsArray = Object.entries(props).map(([key, value]) => ({ key, ...value }))
+
+  // # Set all prop defaults
+  const defaults = getDefaultProps(propsArray)
+
+  // Merge
+  Object.assign(this,
+    {
+      ...defaults, // Set defaults
+      ...feature
+    })
+
   // # Validation
-  if (!handler.render) {
-    console.warn(handler)
-    throw new Error(`No render function found for feature: "${handler.name}"`)
+  if (!feature.render) {
+    throw new Error(`No render function found for feature: "${feature.name}"`)
   }
 
+  // ===========
+  // # Methods
+  // ===========
+  /**
+   * Tries to return the shape a this feature if exist
+   */
+  this.getShape = () => {
+    // MOCK
+    // var length = 3
+    // var width = 3
+
+    // var shape = new THREE.Shape()
+    // shape.moveTo(0, 0)
+    // shape.lineTo(0, width)
+    // shape.lineTo(length, width)
+    // shape.lineTo(length, 0)
+    // shape.lineTo(0, 0)
+    // return shape
+    return this.$shapes ? this.$shapes[0] : null
+  }
+
+  this.getMaterial = (name = '') => {
+    // const found = parametric.materials[name]
+    // if (!found) {
+    //   console.warn(parametric.materials)
+    //   throw new Error(`Material not found: ${name}`)
+    // }
+    // return found
+    return new THREE.LineBasicMaterial({ color: new THREE.Color('blue') })
+  }
+
+  // ===========
   // # Lifecylces
+  // ===========
+
+  /**
+   * destroy function
+   */
   this.destroy = () => {
-    const fakeFn = () => {
-      // console.warn('no destroy fn')
-    }
     // # Call function if exist
-    const fn = handler.destroy || fakeFn
+    const fn = feature.destroy
     return fn.bind(this)()
   }
 
-  const validateProps = (propsArray = []) => {
-    const requiredProps = propsArray.filter(elem => elem.required === true)
-    requiredProps.map(elem => {
-      if (!feature[elem.key]) {
-        console.warn(`Feature property "${elem.key}" is required`)
-        throw new Error(`Feature property "${elem.key}" is required`)
-      }
-      return feature[elem.key]
-    })
-  }
-
-  const getDefaultProps = (propsArray = []) => {
-    return Object.fromEntries(
-      propsArray.map(elem => {
-        // console.log(elem.defaults)
-        return [
-          elem.key,
-          typeof elem.default === 'function'
-            ? elem.default()
-            : elem.default
-        ]
-      })
-    )
-  }
-
-  // # Attach render function
+  /**
+   * Call Feature render function
+   * @param {[]} previousFeatures
+   */
   this.render = (previousFeatures = []) => {
-    // # Validate props
-    const { props = {} } = handler
-    const propsArray = Object.entries(props).map(([key, value]) => ({ key, ...value }))
-
-    // TODO Validation: required props
-    validateProps(propsArray)
+    // Validation
+    validateProps(feature)(propsArray)
     // console.log(validation)
 
-    // # Get all prop defaults
-    const defaults = getDefaultProps(propsArray)
-
-    // console.log('defaults props', defaults)
-
-    // Set properties to allow: E.g. ```this.entities = ['cutsketch']```
-    Object.assign(this, defaults, feature)
-
-    // Mock scene
-    const scene = new THREE.Object3D()
+    // # Render context
+    const context = {
+      ...this,
+      THREE,
+      getFeatureById (id) {
+        return getFeatureById(id, previousFeatures)
+      }
+    }
 
     // # Call render function
-    const fn = handler.render
-    const resp = fn.bind(this)({
-      THREE,
-      getPathFromFeature (feature = {}) {
-        console.log('previousFeatures', previousFeatures)
-        // TODO
-        return previousFeatures.children[0]
-      },
-      getFeatureById (id) {
-        return getFeatureById(id, features)
-      },
-      getMaterial: (name = '') => {
-        // const found = parametric.materials.find(elem => elem.name === name)
-        const found = parametric.materials[name]
-        if (!found) {
-          console.warn(parametric.materials)
-          throw new Error(`Material not found: ${name}`)
-        }
-        return found
-      }
-    })
+    const fn = feature.render
+    const resp = fn.bind(this)(context)
 
-    return resp || scene
+    if (resp.type === 'Shape') {
+      console.log('Shape found', resp)
+      this.$shapes.push(resp)
+    }
+
+    // Return Object3D
+    return resp || new THREE.Object3D()
   }
 }

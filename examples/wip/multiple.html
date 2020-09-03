@@ -1,0 +1,101 @@
+<html>
+
+<head>
+    <style>
+        .items {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Minimal Example</h1>
+
+    <div class="items">
+        <div id="app1" style="width:400px;height:400px;border:1px solid salmon;">
+            loading...
+        </div>
+        <div id="app2" style="width:400px;height:400px;border:1px solid salmon;">
+            loading...
+        </div>
+    </div>
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js'></script>
+    <script src='/parametric.js'></script>
+
+    <script>
+        console.log(Parametric)
+        const { Scene, Feature } = ParametricJs
+
+        const scene1 = new Scene({
+            el: 'app1',
+            camera: {
+                x: 10,
+                y: 10,
+                z: 10
+            }
+        })
+
+        const scene2 = new Scene({
+            el: 'app2',
+            camera: {
+                x: 10,
+                y: 10,
+                z: 10
+            }
+        })
+
+        const feature1 = new Feature({
+            id: 'box',
+            type: 'path',
+            plane: 'front',
+            path: [
+                {
+                    x: 0,
+                    y: 0
+                }, {
+                    x: 4,
+                    y: 0
+                }, {
+                    x: 4,
+                    y: 4
+                }, {
+                    x: 0,
+                    y: 4
+                }, {
+                    x: 0,
+                    y: 0
+                }
+            ]
+        })
+
+        const feature2 = new Feature({
+            type: 'extrude',
+            // selectById: 'box',
+            distance: 4,
+            entities: ['box']
+        })
+
+        console.log("Features", {
+            feature1,
+            feature2
+        })
+
+        console.log("Features rendered", {
+            feature1: feature1.render({}),
+            feature2: feature2.render({})
+        })
+
+        // console.log(part)
+        scene1.add(
+            feature1.render()
+        )
+        scene2.add(
+            feature2.render()
+        )
+    </script>
+</body>
+
+</html>

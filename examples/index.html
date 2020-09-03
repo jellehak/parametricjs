@@ -1,18 +1,73 @@
-<h1>
-    ParametricJS
-</h1>
-<p>
-    A fast javascript based CAD engine
-</p>
+<html>
 
-<h2>
-    Examples:
-</h2>
-<a href='minimal/'>Minimal</a><br>
-<a href='fullscreen/'>fullscreen/</a><br>
-<a href='debug/'>debug</a><br>
-<a href='features/'>Features</a><br>
-<!-- <a href='editor/'>Editor</a><br>
-<a href='pattern/'>Pattern</a><br>
-<a href='sketch/'>sketch</a><br>
-<a href='viewer/'>viewer</a><br> -->
+<head>
+
+</head>
+
+<body>
+    <h1>Minimal Example</h1>
+
+    <div id="app" style="width:100%;min-height:400px">
+        loading...
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js'></script>
+    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js'></script> -->
+    <script src='/parametric.js'></script>
+
+    <script>
+        const { Scene, Feature } = ParametricJs
+
+        const parametric = new Scene({
+            el: 'app',
+            camera: {
+                x: 10,
+                y: 10,
+                z: 10
+            }
+        })
+
+        // Convert parametric info to mesh
+        const part = parametric.compile([
+            {
+                id: 'box',
+                type: 'path',
+                plane: 'front',
+                path: [
+                    {
+                        x: 0,
+                        y: 0
+                    }, {
+                        x: 4,
+                        y: 0
+                    }, {
+                        x: 4,
+                        y: 4
+                    }, {
+                        x: 0,
+                        y: 4
+                    }, {
+                        x: 0,
+                        y: 0
+                    }
+                ]
+            },
+            {
+                type: 'extrude',
+                distance: 16,
+                entities: ['box'],
+            }
+        ])
+
+        console.log(parametric)
+
+        console.log(part)
+
+        // Add it to the scene
+        parametric.add(
+            part.render({ height: 10 })
+        )
+    </script>
+</body>
+
+</html>

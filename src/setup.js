@@ -1,5 +1,4 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-// import 'three/examples/js/Detector.js'
 const { THREE } = window
 
 export default function buildAxesPos (size = 100, vector = {}) {
@@ -21,9 +20,6 @@ const DEFAULT_CONFIG = {
   store: localStorage
 }
 
-//   console.log('He')
-// Setup THREEJS scene
-// From https://github.com/jellehak/Y3D/blob/master/src/yellow3d.js
 export function setup (_config = DEFAULT_CONFIG) {
   // Merge config
   const config = {
@@ -31,18 +27,19 @@ export function setup (_config = DEFAULT_CONFIG) {
     ..._config
   }
 
-  // Render to existing element or create a new one?
-  let element
-  if (config.el) {
-    console.log(`[parametricjs] Rendering scene to element: ${config.el}`)
-    element = document.getElementById(config.el)
-  } else {
-    console.log(`[parametricjs] Rendering scene to added div`)
-    // Full screen
-    element = document.createElement('div')
-    document.body.appendChild(element)
-  }
+  // Render to existing element
+  const element = typeof config.el === 'string'
+    ? document.getElementById(config.el)
+    : config.el
 
+  // else {
+  //   console.log(`[parametricjs] Rendering scene to added div`)
+  //   // Full screen
+  //   element = document.createElement('div')
+  //   document.body.appendChild(element)
+  // }
+
+  // Create scene and set camera
   //   const aspect = window.innerWidth / window.innerHeight
   const aspect = element.offsetWidth / element.offsetHeight
   var scene = new THREE.Scene()
@@ -66,7 +63,7 @@ export function setup (_config = DEFAULT_CONFIG) {
   light.position.set(-1, 0.75, -0.5)
   scene.add(light)
 
-  // WebGLRenderer
+  // Mount WebGLRenderer to DOM
   // =====
   var renderer = new THREE.WebGLRenderer({
     antialias: true
@@ -76,6 +73,8 @@ export function setup (_config = DEFAULT_CONFIG) {
   //   document.body.appendChild(renderer.domElement)
   element.innerHTML = '' // Clear element first
   element.appendChild(renderer.domElement)
+  // TODO ?
+  // document.replaceChild(element, renderer.domElement)
 
   // Controls
   const controls = new OrbitControls(camera, element)

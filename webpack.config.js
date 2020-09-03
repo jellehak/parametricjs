@@ -1,14 +1,11 @@
 // https://github.com/krasimir/webpack-library-starter
 
-// Webpack config for creating libs
-// const CopyWebpackPlugin = require('copy-webpack-plugin')
-
 module.exports = {
-  // entry: './src/index.js',
   stats: 'minimal',
+  entry: './src/index.js',
   output: {
     filename: 'parametric.js',
-    // libraryTarget: 'umd',
+    libraryTarget: 'window',
     library: 'Parametric'
     // publicPath: '/dist/',
     // umdNamedDefine: true
@@ -25,7 +22,8 @@ module.exports = {
       // { test: /\.js|es6$/, exclude: /node_modules/, loader: 'babel-loader' }
     ]
   },
-  plugins: [
-    // new CopyWebpackPlugin([ { from: './public', to: './' } ])
-  ]
+  // https://webpack.js.org/configuration/externals/
+  externals: {
+    THREE: 'THREE'
+  }
 }

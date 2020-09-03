@@ -5,6 +5,10 @@ export default {
   name: 'sketch-path',
 
   props: {
+    material: {
+      default: () => new THREE.LineBasicMaterial({ color: 0x000000 })
+    },
+
     values: {
       type: Array,
       default: () => (
@@ -28,11 +32,7 @@ export default {
     }
   },
 
-  render ({ compile, THREE, feature } = {}) {
-    const materials = {
-      normal: new THREE.LineBasicMaterial({ color: 0x000000 })
-    }
-
+  render ({ compile, THREE } = {}) {
     const { values } = this
 
     // Create rendered sketch
@@ -47,8 +47,8 @@ export default {
 
     // TODO Mutate feature => Not such a good idea
     const shape = PathToShape(values)
-    feature._path = _path
-    feature._shape = shape
+    // feature._path = _path
+    // feature._shape = shape
 
     // # Collect points
     // var points = shape.getPoints()
@@ -62,7 +62,7 @@ export default {
     console.log(points)
     var geometry = new THREE.BufferGeometry().setFromPoints(points)
 
-    var lines = new THREE.Line(geometry, materials.normal)
+    var lines = new THREE.Line(geometry, this.materials)
     lines.name = 'lines'
 
     // Return THREE Object: Line
