@@ -10,11 +10,12 @@ export default {
     entities: {
       title: 'Entities',
       type: 'Entities',
-      required: true
+      // required: true
+      default: () => ([])
     },
     factor: {
       title: 'Factor',
-      type: Number,
+      type: 'number',
       default: 10
     }
   },
@@ -23,7 +24,7 @@ export default {
     // console.log(this.entities, previousState)
     const parsedEntities = parseEntities(this.entities)
 
-    // console.log(parsedEntities)
+    console.log(parsedEntities)
     // NOTE: MUTATION
     parsedEntities.map(elem => {
       console.log(elem)

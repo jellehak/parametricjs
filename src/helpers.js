@@ -1,7 +1,3 @@
-
-// ============
-// Helpers
-// ============
 export const getFeatureHandler = (features = []) => (name = '') => {
   const found = features[name]
   // console.log(name, found, features)
@@ -27,7 +23,6 @@ export const computeMouseXY = (domElement = window) => (e = {}) => {
   }
 }
 
-// Compiler
 export const compileParameters = (parameters = []) => {
   const code = parameters || [].map((elem, key) => {
     const value = parameters[key]
@@ -70,7 +65,7 @@ export const getFeatureById = (id, source = []) => {
  * 'human' => THREE.Object
  * @param {*} entities
  */
-export const parseEntity = ({ livePart, featureMeshLookup }) => mixed => {
+export const createParseEntity = ({ livePart, featureMeshLookup }) => mixed => {
   const SPECIALS = {
     $all: () => livePart,
     $previous: () => {
@@ -78,29 +73,14 @@ export const parseEntity = ({ livePart, featureMeshLookup }) => mixed => {
       return livePart.children[index]
     }
   }
-  const isSpecial = SPECIALS[mixed]
 
+  // special like $all, ..
+  const isSpecial = SPECIALS[mixed]
   if (isSpecial) {
     return isSpecial()
   }
 
-  // HACKY
+  // or just an id
   const feature = getFeatureById(mixed, featureMeshLookup)
-  // console.log('feature', feature)
-  // console.log('richFeatures', this.richFeatures)
-  // return isSpecial ? isSpecial() : this.model.getObjectByName(mixed)
-  return feature._mesh
-}
-
-/**
- * Convert entities array to a THREE array
- * ['human','$previous'] => [THREE.Object, THREE.Object]
- * @param {*} entities
- */
-export const createParseEntities = ({ livePart, featureMeshLookup }) => (entities = []) => {
-  // Handle entities specials like $all
-  // console.log('parseEntities', entities)
-  const resp = entities.map(parseEntity({ livePart, featureMeshLookup }))
-  // console.log(resp)
-  return resp
+  return feature
 }

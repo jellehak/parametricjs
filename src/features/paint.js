@@ -1,3 +1,4 @@
+// https://threejs.org/examples/#webgl_decals
 // https://github.com/mrdoob/three.js/blob/master/examples/webgl_decals.html
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
 
@@ -94,7 +95,7 @@ export default {
 
       // console.log('getMouse', getMouse())
       const mouse = getMouse()
-      console.log(mouse, camera, mesh)
+      console.log(mouse, mesh)
 
       raycaster.setFromCamera(mouse, camera)
       raycaster.intersectObject(mesh, false, intersects)
@@ -131,7 +132,7 @@ export default {
         console.warn('No entities set', this.entities, this)
         return
       } else {
-        console.warn('Painting', this.entities, this)
+        console.warn('Painting', this.entities)
       }
       // window.addEventListener('mouseup', function () {
       checkIntersection()
@@ -176,7 +177,7 @@ export default {
     group.add(line)
 
     mouseHelper = new THREE.Mesh(new THREE.BoxBufferGeometry(1, 1, 10), new THREE.MeshNormalMaterial())
-    mouseHelper.visible = false
+    mouseHelper.visible = true
     group.add(mouseHelper)
 
     return group

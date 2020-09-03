@@ -12,11 +12,11 @@ export default {
   props: {
     entities: {
       title: 'Entities',
-      type: Array
+      type: 'array'
     },
     amount: {
       title: 'Distance',
-      type: Number,
+      type: 'Number',
       default: 10
     }
   },

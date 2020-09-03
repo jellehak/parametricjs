@@ -4,15 +4,15 @@ export default {
   props: {
     entities: {
       title: 'Entities to chamfer',
-      type: Array
+      type: 'Array'
     },
     distance: {
       title: 'Distance',
-      type: Number
+      type: 'Number'
     }
   },
 
   created () {
-    return standardChamfer(context, id, definition)
+    // return standardChamfer(context, id, definition)
   }
 }

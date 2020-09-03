@@ -2,7 +2,9 @@
 
 # Roadmap
 - [ ] Add basic feature like cut, extrude
+- [ ] Add assembly mates
 - [ ] Add more advanced features like sweep, loft feature
+- [ ] Timing to compilation
 
 # Introduction
 This library converts the following json structure to a THREE mesh. We refer to this object as the `FeatureObject`
@@ -38,12 +40,38 @@ This library converts the following json structure to a THREE mesh. We refer to 
 ```
 
 # Usage
+See the examples folder.
 
 Include the libary 
-```js
+```html
+<div id="viewer"></div>
+<script src='/parametric.js'></script>
+<script>
+    const model = {
+        features: [
+            {
+                type: 'box',
+            }
+        ]
+    }
 
+    // Helper to create threejs scene
+    const {scene} = Parametric.setup({
+        el: 'app',
+        camera: {
+            x: 10,
+            y: 10,
+            z: 10,
+        },
+    })
+
+    // Convert parametric info to mesh
+    const part = Parametric.create(model)
+
+    // Add it to the scene
+    scene.add(part.render())
+</script>
 ```
-
 
 # Examples
 [link](/examples/debug ':ignore')

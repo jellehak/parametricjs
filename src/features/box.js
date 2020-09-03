@@ -3,19 +3,19 @@ export default {
 
   props: {
     width: {
-      type: 'Number',
+      type: 'number',
       default: 10
     },
     height: {
-      type: 'Number',
+      type: 'number',
       default: 10
     },
     depth: {
-      type: 'Number',
+      type: 'number',
       default: 10
     },
     color: {
-      type: 'Color',
+      type: 'color',
       default: 'blue'
     }
   },

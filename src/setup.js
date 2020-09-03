@@ -74,6 +74,7 @@ export function setup (_config = DEFAULT_CONFIG) {
   //   renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.setSize(element.offsetWidth, element.offsetHeight)
   //   document.body.appendChild(renderer.domElement)
+  element.innerHTML = '' // Clear element first
   element.appendChild(renderer.domElement)
 
   // Controls
@@ -100,19 +101,6 @@ export function setup (_config = DEFAULT_CONFIG) {
   //   scene.add(cube)
 
   camera.position.z = 5
-
-  // Animate
-  const animate = function () {
-    requestAnimationFrame(animate)
-
-    // required if controls.enableDamping or controls.autoRotate are set to true
-    controls.update()
-
-    renderer.render(scene, camera)
-  }
-
-  // Start animate
-  animate()
 
   // Expose
   return { scene, controls, camera, renderer, element }

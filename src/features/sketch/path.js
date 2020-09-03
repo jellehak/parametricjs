@@ -45,8 +45,8 @@ export default {
       })
     })
 
-    // Finalize
-    const shape = PathToShape(values) // TODO --speed || pathCompiled)
+    // TODO Mutate feature => Not such a good idea
+    const shape = PathToShape(values)
     feature._path = _path
     feature._shape = shape
 
@@ -64,6 +64,8 @@ export default {
 
     var lines = new THREE.Line(geometry, materials.normal)
     lines.name = 'lines'
+
+    // Return THREE Object: Line
     return lines
   }
 }

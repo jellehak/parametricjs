@@ -15,7 +15,9 @@ export default {
 
   },
 
-  render ({ THREE, scene }) {
+  render ({ THREE }) {
+    console.log('origin', this)
+
     // https://2pha.com/blog/threejs-easy-round-circular-particles/
     const createCircleTexture = (color, size) => {
       var matCanvas = document.createElement('canvas')

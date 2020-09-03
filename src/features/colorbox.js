@@ -2,10 +2,7 @@ export default {
   name: 'colorbox',
 
   props: {
-    direction: {
-      title: 'direction',
-      default: [10, 0, 0]
-    }
+
   },
 
   render ({ getFeatureById, feature, object3d }, previousState) {

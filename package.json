@@ -11,7 +11,7 @@
         "start": "npx webpack-dev-server --mode development --hide-modules",
         "predeploy": "GHPAGE=1 npm run build",
         "deploy": "gh-pages -d dist",
-        "docs": "npx browser-sync docs"
+        "docs": "npx browser-sync docs --watch"
     },
     "dependencies": {
         "@tweenjs/tween.js": "^17.3.0",

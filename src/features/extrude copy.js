@@ -1,17 +1,5 @@
-function pathToShape (path = []) {
-  const shape = new THREE.Shape()
-  const start = path[0]
-  shape.moveTo(start.x, start.y)
-  for (const k in path) {
-    const p = path[k]
-    shape.lineTo(p.x, p.y)
-  }
-  shape.lineTo(path[0].x, path[0].y) // Close
-  return shape
-}
-
 export default {
-  name: 'extrude',
+  name: 'extrude-old',
 
   props: {
     entities: {
@@ -31,35 +19,32 @@ export default {
     }
   },
 
-  render ({ getMaterial, getPathFromFeature, getFeatureById, feature, THREE } = {}) {
+  render ({ PathToShape, getMaterial, getFeatureById, feature, THREE } = {}) {
     // Destructure feature
-    const { id, distance = 10, entities = [] } = this
+    const { id, distance } = this
 
-    console.log('EXTRUDE', entities, distance)
+    // Create copy of settings
+    // const _data = Object.create(feature)
+    // Compile Extrude settings?
+    // _data.distance = compile(distance)
 
     // TODO allow multiple entities
-    const target = getFeatureById(entities[0])
-    console.log('target', target)
+    const target = getFeatureById(this.entities[0])
 
     if (!target) {
-      console.warn(`[extrude] couldnt find suitable path to extrude`, target, this.entities, feature)
+      console.warn(target, this.entities, feature)
       throw new Error(`[extrude] couldnt find suitable path to extrude`)
     }
 
     // Use static sketch or parametric sketch?
     // TODO use `this.entities`
-    // const { path, _path: pathCompiled } = target
-    const path = getPathFromFeature(target)
+    const { path, _path: pathCompiled } = target
 
-    // Convert Path to THREE.Shape
-    const shape = pathToShape(path)
-    // var shape = new THREE.Shape()
-    // var length = 12; var width = 8
-    // shape.moveTo(0, 0)
-    // shape.lineTo(0, width)
-    // shape.lineTo(length, width)
-    // shape.lineTo(length, 0)
-    // shape.lineTo(0, 0)
+    // Get Shape
+    const shape = feature._shape || PathToShape(path || pathCompiled)
+
+    // Debug
+    // console.log(`Extruding with ${distance}`)
 
     // Extrude
     // const material = red

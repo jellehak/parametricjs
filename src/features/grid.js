@@ -5,12 +5,12 @@ export default {
   props: {
     distance: {
       title: 'Distance',
-      type: Number,
+      type: 'Number',
       default: 10
     },
     segments: {
       title: 'Segments',
-      type: Number,
+      type: 'Number',
       default: 10
     }
   },
