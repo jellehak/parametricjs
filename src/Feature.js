@@ -1,4 +1,4 @@
-import { uid, createParseEntity, getFeatureById, getFeatureHandlerById } from './helpers/helpers'
+import { uid, getFeatureById } from './helpers/helpers'
 const { THREE } = window
 
 const FEATURE = {
@@ -46,59 +46,45 @@ const getDefaultProps = (propsArray = []) => {
  * @param {*} featureHandler
  * @param {*} feature
  */
-export default function Feature (_feature = FEATURE) {
-  console.log(_feature)
+export default class Feature {
+  constructor (_feature = FEATURE) {
+    // # Get props
+    const { props = {} } = _feature
+    const propsArray = Object.entries(props).map(([key, value]) => ({ key, ...value }))
 
-  // Merge with defaults
-  const feature = {
-    id: uid(),
-    ...FEATURE,
-    name: _feature.type,
-    ..._feature
-  }
-  // console.log(feature)
+    // # Set prop defaults
+    const defaults = getDefaultProps(propsArray)
 
-  // # Validate props
-  const { props = {} } = feature
-  const propsArray = Object.entries(props).map(([key, value]) => ({ key, ...value }))
-
-  // # Set all prop defaults
-  const defaults = getDefaultProps(propsArray)
-
-  // Merge
-  Object.assign(this,
-    {
-      ...defaults, // Set defaults
-      ...feature
-    })
-
-  // # Validation
-  if (!feature.render) {
-    throw new Error(`No render function found for feature: "${feature.name}"`)
+    // Merge
+    Object.assign(this,
+      {
+        shapes: [],
+        ...defaults, // Set defaults
+        // ...feature
+        ...FEATURE,
+        id: uid(),
+        name: _feature.type,
+        ..._feature
+      })
   }
 
   // ===========
   // # Methods
   // ===========
-  /**
-   * Tries to return the shape a this feature if exist
-   */
-  this.getShape = () => {
-    // MOCK
-    // var length = 3
-    // var width = 3
-
-    // var shape = new THREE.Shape()
-    // shape.moveTo(0, 0)
-    // shape.lineTo(0, width)
-    // shape.lineTo(length, width)
-    // shape.lineTo(length, 0)
-    // shape.lineTo(0, 0)
-    // return shape
-    return this.$shapes ? this.$shapes[0] : null
+  getShapes () {
+    return this.shapes
+    // return this.$shapes
   }
 
-  this.getMaterial = (name = '') => {
+  /**
+   * Tries to return a shape of this feature if exist
+   */
+  getShape () {
+    const shapes = this.getShapes()
+    return shapes ? shapes[0] : null
+  }
+
+  getMaterial (name = '') {
     // const found = parametric.materials[name]
     // if (!found) {
     //   console.warn(parametric.materials)
@@ -115,9 +101,8 @@ export default function Feature (_feature = FEATURE) {
   /**
    * destroy function
    */
-  this.destroy = () => {
-    // # Call function if exist
-    const fn = feature.destroy
+  destroy () {
+    const fn = this.feature.destroy
     return fn.bind(this)()
   }
 
@@ -125,14 +110,68 @@ export default function Feature (_feature = FEATURE) {
    * Call Feature render function
    * @param {[]} previousFeatures
    */
-  this.render = (previousFeatures = []) => {
+  callRender (previousFeatures = []) {
     // Validation
-    validateProps(feature)(propsArray)
-    // console.log(validation)
+    validateProps(this.feature)(this.propsArray)
+
+    // Resolve entity
+    const getEntity = (mixed = '') => {
+      console.log('getEntity search for ', mixed)
+
+      if (!mixed) {
+      // console.warn('')
+        return
+      }
+      // const SPECIALS = {
+      //   $all: () => livePart,
+      //   $previous: () => {
+      //     const index = livePart.children.length - 1
+      //     return livePart.children[index]
+      //   }
+      // }
+
+      // // special like $all, ..
+      // const isSpecial = SPECIALS[mixed]
+      // if (isSpecial) {
+      //   return isSpecial()
+      // }
+
+      return getFeatureById(mixed, previousFeatures)
+    }
+
+    // Sugar for return function
+    const scene = new THREE.Object3D()
+    scene.name = 'feature-scene'
 
     // # Render context
     const context = {
       ...this,
+
+      scene,
+
+      getEntity,
+      // Resolve entities
+      getEntities (mixed = []) {
+        console.log(mixed)
+
+        if (!mixed) {
+          console.warn('No input for getEntities')
+          return null
+        }
+
+        // const isArray = mixed.length
+        // if (!isArray) {
+        //   console.warn(mixed)
+        //   throw new Error(`Input should be an array provided ${typeof mixed}`)
+        // }
+
+        return mixed.map(entity => {
+          return getEntity(mixed)
+        })
+      },
+
+      getMaterial: this.getMaterial,
+      getShape: this.getShape,
       THREE,
       getFeatureById (id) {
         return getFeatureById(id, previousFeatures)
@@ -140,15 +179,24 @@ export default function Feature (_feature = FEATURE) {
     }
 
     // # Call render function
-    const fn = feature.render
-    const resp = fn.bind(this)(context)
+    const fn = this.render
+    const resp = fn.bind(this)(context) || scene
 
-    if (resp.type === 'Shape') {
-      console.log('Shape found', resp)
-      this.$shapes.push(resp)
+    console.log(resp)
+
+    // Validation
+    // if (!resp) {
+    //   throw new Error(`Render function of feature "${this.name}" returns nothing`)
+    // }
+
+    // Extract info from render
+    if (resp && resp.type === 'Shape') {
+      // console.log('Shape found', resp)
+      this.shapes.push(resp)
     }
 
     // Return Object3D
-    return resp || new THREE.Object3D()
+    return resp
+    // return resp || new THREE.Object3D()
   }
 }

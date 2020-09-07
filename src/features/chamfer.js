@@ -1,6 +1,4 @@
 export default {
-  name: 'chamfer',
-
   props: {
     entities: {
       title: 'Entities to chamfer',
@@ -12,7 +10,8 @@ export default {
     }
   },
 
-  created () {
+  mounted () {
     // return standardChamfer(context, id, definition)
+    console.warn('TODO')
   }
 }

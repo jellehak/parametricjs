@@ -12,9 +12,9 @@ export default function buildAxesPos (size = 100, vector = {}) {
 const DEFAULT_CONFIG = {
   el: 'app',
   camera: {
-    x: 100,
-    y: 100,
-    z: 100
+    x: 10,
+    y: 10,
+    z: 10
   },
   background: 'white', // 0xffffff,
   store: localStorage
@@ -43,7 +43,9 @@ export function setup (_config = DEFAULT_CONFIG) {
   //   const aspect = window.innerWidth / window.innerHeight
   const aspect = element.offsetWidth / element.offsetHeight
   var scene = new THREE.Scene()
-  var camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000)
+  // var camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000)
+  var camera = new THREE.PerspectiveCamera(30, aspect, 1, 10000)
+
   camera.position.set(config.camera.x, config.camera.y, config.camera.z)
 
   // Lights

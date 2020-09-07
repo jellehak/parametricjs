@@ -8,7 +8,7 @@ export default {
 
   },
 
-  async render ({ destroy, rootScene, addEventListener, getMouse, camera, THREE, parseEntities, raycaster }, previousState) {
+  async render ({ destroy, rootScene, addEventListener, getMouse, camera, THREE, getEntities, raycaster }, previousState) {
     // ==========
     // State
     // ==========

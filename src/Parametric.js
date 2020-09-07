@@ -1,4 +1,4 @@
-import features from './autoload'
+import features from './features'
 import Feature from './Feature'
 import ThreeBSP from './helpers/threeCSG.js'
 import { setup } from './setup'
@@ -26,11 +26,10 @@ export default class Parametric {
   constructor (settings = SETTINGS) {
     // Register default features
     // this.features = Object.values(features)
-    this.features = Object.entries(features).map(([key, value]) => ({
-      name: key, // Default to filename
-      ...value
-    }))
-    this.featuresLookup = { ...features }
+    this.features = features
+    // Alias ?
+    this.featuresLookup = features
+    // this.featuresLookup = { ...features }
 
     // Eagerly create scene
     if (settings.el) {
@@ -40,6 +39,10 @@ export default class Parametric {
     return this
   }
 
+  /**
+   * Mount to DOM
+   * @param {*} settings
+   */
   $mount (settings = SETTINGS) {
     const { scene, camera, mouse, renderer, controls, element, raycast } = setup(settings)
     const orbit = controls
@@ -78,8 +81,8 @@ export default class Parametric {
         raycast,
         renderer,
         materials,
-        transformControls,
-        featureMeshLookup: [] // Set by render()
+        transformControls
+        // featureMeshLookup: [] // Set by render()
       })
 
     // State

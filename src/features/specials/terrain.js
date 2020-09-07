@@ -20,7 +20,7 @@ export default {
     }
   },
 
-  render ({ THREE, parseEntities } = {}, previousState) {
+  render ({ THREE, getEntities } = {}, previousState) {
     var terrain_geometry = makeTile(0.1, 40)
     var terrain_material = new THREE.MeshLambertMaterial({ color: new THREE.Color(0.9, 0.55, 0.4) })
     var terrain = new THREE.Mesh(terrain_geometry, terrain_material)

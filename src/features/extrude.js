@@ -1,10 +1,11 @@
 export default {
-  name: 'extrude',
+  // name: 'extrude',
 
   props: {
     entities: {
-      title: 'Entities',
-      type: 'path',
+      title: 'Entity',
+      type: 'entity',
+      default: '$previous',
       required: true
     },
     distance: {

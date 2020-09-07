@@ -7,11 +7,11 @@ export default {
   `,
 
   props: {
-    entity: {
+    entities: {
       title: 'Entity',
       type: 'entity',
       // required: true
-      default: ''
+      default: () => ([])
     },
     factor: {
       title: 'Factor',
@@ -20,19 +20,17 @@ export default {
     }
   },
 
-  render ({ THREE, getEntity } = {}, previousState) {
+  render ({ THREE, getEntities } = {}, previousState) {
     // console.log(this.entities, previousState)
-    const entity = getEntity(this.entity)
+    const parsedEntities = getEntities(this.entities)
 
-    console.log(entity)
-    if (!entity) {
-      console.warn('Nothing to scale')
-      return
-    }
+    console.log(parsedEntities)
+    // NOTE: MUTATION
+    parsedEntities.map(elem => {
+      console.log(elem)
+      elem.scale.set(this.factor, this.factor, this.factor)
+    })
 
-    console.warn('TODO clone object')
-    entity.scale.set(this.factor, this.factor, this.factor)
-
-    return entity
+    return parsedEntities
   }
 }

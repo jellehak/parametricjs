@@ -78,22 +78,22 @@ export const getFeatureById = (id, source = []) => {
  * 'human' => THREE.Object
  * @param {*} entities
  */
-export const createParseEntity = ({ livePart, featureMeshLookup }) => mixed => {
-  const SPECIALS = {
-    $all: () => livePart,
-    $previous: () => {
-      const index = livePart.children.length - 1
-      return livePart.children[index]
-    }
-  }
+// export const createParseEntity = ({ livePart, featureMeshLookup }) => mixed => {
+//   const SPECIALS = {
+//     $all: () => livePart,
+//     $previous: () => {
+//       const index = livePart.children.length - 1
+//       return livePart.children[index]
+//     }
+//   }
 
-  // special like $all, ..
-  const isSpecial = SPECIALS[mixed]
-  if (isSpecial) {
-    return isSpecial()
-  }
+//   // special like $all, ..
+//   const isSpecial = SPECIALS[mixed]
+//   if (isSpecial) {
+//     return isSpecial()
+//   }
 
-  // or just an id
-  const feature = getFeatureById(mixed, featureMeshLookup)
-  return feature
-}
+//   // or just an id
+//   const feature = getFeatureById(mixed, featureMeshLookup)
+//   return feature
+// }

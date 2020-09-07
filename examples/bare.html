@@ -12,7 +12,6 @@
     </div>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.min.js'></script>
-    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js'></script> -->
     <script src='/parametric.js'></script>
 
     <script>
@@ -27,42 +26,32 @@
             }
         })
 
-        // Create features
+        // List basic features
+        console.log('Available features', scene.featuresLookup)
+
+        // # Create features 
+        // 1) Direct method
         const feature1 = new Feature({
-            id: 'box',
-            type: 'path',
-            plane: 'front',
-            path: [
-                {
-                    x: 0,
-                    y: 0
-                }, {
-                    x: 4,
-                    y: 0
-                }, {
-                    x: 4,
-                    y: 4
-                }, {
-                    x: 0,
-                    y: 4
-                }, {
-                    x: 0,
-                    y: 0
-                }
-            ]
+            ...scene.featuresLookup.heart,
+            id: 'shape1',
+            // type: 'heart'
         })
+        
+        // 2) With factory function
+        const feature1B = scene.feature({
+            type: 'heart',
+            id: 'shape1',
+        })
+        console.log('Feature1',feature1, feature1B)
 
         const feature2 = new Feature({
+            ...scene.featuresLookup.extrude,
             type: 'extrude',
             distance: 4,
-            entities: ['box']
+            entities: ['shape1']
         })
+        console.log('Feature2',feature2)
 
-        // Log features
-        console.log("Features", {
-            feature1,
-            feature2
-        })
 
         // Debug a feature with methods
         console.log('Retrieve single shape from feature', feature1.getShape())
@@ -70,7 +59,7 @@
         // Compile all features
         const part = new Part([
             feature1,
-            // feature2
+            feature2
         ])
         console.log(part)
         console.log('Part render', part.render())
@@ -83,10 +72,10 @@
         // ==========
         // RAW THREE ACCESS
         // Flatten all scene objects
-        console.log("SCENE")
-        scene.scene.traverse(function (child) {
-            console.log(child)
-        });
+        // console.log("SCENE")
+        // scene.scene.traverse(function (child) {
+        //     console.log(child)
+        // });
 
         // Flatten all features
         console.log("FEATURES")

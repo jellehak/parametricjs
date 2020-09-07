@@ -18,8 +18,8 @@ export default {
     }
   },
 
-  async render ({ destroy, addEventListener, getMouse, camera, THREE, parseEntities, raycaster }, previousState) {
-    // const parsedEntities = parseEntities(this.entities)
+  async render ({ destroy, addEventListener, getMouse, camera, THREE, getEntities, raycaster }, previousState) {
+    // const parsedEntities = getEntities(this.entities)
 
     // ==========
     // State
@@ -54,7 +54,7 @@ export default {
     // Helpers
     // ==========
     const getMesh = () => {
-      const parsedEntities = parseEntities(this.entities)
+      const parsedEntities = getEntities(this.entities)
 
       // console.log(this.entities, parsedEntities)
       // return parsedEntities[0]
