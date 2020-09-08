@@ -1,4 +1,4 @@
-import features from './features'
+import features, { featuresLookup } from './features'
 import Feature from './Feature'
 import ThreeBSP from './helpers/threeCSG.js'
 import { setup } from './setup'
@@ -24,18 +24,17 @@ const SETTINGS = {
  */
 export default class Parametric {
   constructor (settings = SETTINGS) {
-    // Register default features
-    // this.features = Object.values(features)
-    this.features = features
-    // Alias ?
-    this.featuresLookup = features
-    // this.featuresLookup = { ...features }
-
     // Eagerly create scene
     if (settings.el) {
       this.$mount(settings)
     }
 
+    Object.assign(this, {
+      version: '0.0.2',
+      features: features,
+      events: [],
+      featuresLookup: featuresLookup
+    })
     return this
   }
 
@@ -53,24 +52,31 @@ export default class Parametric {
       orbit.enabled = !event.value
     })
 
-    // # Add parent for the model
+    // # Add container object for the model
     const model = new THREE.Object3D()
     model.name = 'model'
     scene.add(model)
 
     // # Keep track of the mouse
-    const onTouchMove = e => {
-      const mouse = computeMouseXY(renderer.domElement)(e)
-      // console.log(mouse)
-      this.mouse = mouse
-    }
-    renderer.domElement.addEventListener('mousemove', onTouchMove)
-    renderer.domElement.addEventListener('touchmove', onTouchMove)
+    // const onTouchMove = e => {
+    //   const mouse = computeMouseXY(renderer.domElement)(e)
+    //   // console.log(mouse)
+    //   this.mouse = mouse
+    // }
+    // renderer.domElement.addEventListener('mousemove', onTouchMove)
+    // renderer.domElement.addEventListener('touchmove', onTouchMove)
+
+    controls.addEventListener('end', (e) => {
+    // Update localStorage?
+      // console.log('Cam change', e)
+      // config.store.camera = JSON.stringify(camera.position)
+      // Emit custom event
+      this.dispatchEvent('update:camera', e)
+    })
 
     // Set this
     Object.assign(this,
       {
-        version: '0.0.2',
         ThreeBSP,
         mouse,
         scene,
@@ -78,11 +84,12 @@ export default class Parametric {
         camera,
         controls,
         element,
+        // Alias
+        container: renderer.domElement,
         raycast,
         renderer,
         materials,
         transformControls
-        // featureMeshLookup: [] // Set by render()
       })
 
     // State
@@ -174,9 +181,20 @@ export default class Parametric {
     console.log(`New view style ${type}`)
   }
 
-  // Browser event handler alias
+  /**
+   * Proxy for this.element events
+   * @param {*} event
+   * @param {*} cb
+   */
   on (event, cb = () => { }) {
     return this.element.addEventListener(event, cb)
+  }
+
+  dispatchEvent (name = '', args) {
+    const event = new CustomEvent(name, { detail: args })
+
+    // Dispatch the event.
+    this.element.dispatchEvent(event)
   }
 
   /**
@@ -194,12 +212,13 @@ export default class Parametric {
     // Create Feature
     return new Feature({
       ...handler,
-      ...settings
+      ...settings,
+      $root: this
     })
   }
 
   /**
-   * feature factory (alias of compileFeature)
+   * feature factory (alias of createFeature)
    * @param {*} type
    */
   feature (settings = {
@@ -218,7 +237,7 @@ export default class Parametric {
     // Convert to Feature Objects
     const features = _features.map(this.feature.bind(this))
 
-    // Compile all features
+    // Wrap in Part object
     const part = new Part(features)
 
     return part

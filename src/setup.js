@@ -16,8 +16,7 @@ const DEFAULT_CONFIG = {
     y: 10,
     z: 10
   },
-  background: 'white', // 0xffffff,
-  store: localStorage
+  background: 'white' // 0xffffff,
 }
 
 export function setup (_config = DEFAULT_CONFIG) {
@@ -45,7 +44,6 @@ export function setup (_config = DEFAULT_CONFIG) {
   var scene = new THREE.Scene()
   // var camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000)
   var camera = new THREE.PerspectiveCamera(30, aspect, 1, 10000)
-
   camera.position.set(config.camera.x, config.camera.y, config.camera.z)
 
   // Lights
@@ -67,9 +65,12 @@ export function setup (_config = DEFAULT_CONFIG) {
 
   // Mount WebGLRenderer to DOM
   // =====
-  var renderer = new THREE.WebGLRenderer({
-    antialias: true
-  })
+  var renderer =
+    new THREE.WebGL1Renderer({
+    // new THREE.WebGLRenderer({
+      antialias: true
+    })
+
   //   renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.setSize(element.offsetWidth, element.offsetHeight)
   //   document.body.appendChild(renderer.domElement)
@@ -80,14 +81,18 @@ export function setup (_config = DEFAULT_CONFIG) {
 
   // Controls
   const controls = new OrbitControls(camera, element)
-  controls.target.set(0, 0, 0)
+  // controls.target.set(0, 0, 0)
+  // camera.position.set(0, 100, 100)
+  controls.enableDamping = true // an animation loop is required when either damping or auto-rotation are enabled
+  controls.dampingFactor = 0.1
+  // camera.position.set(400, 200, 100)
   controls.update()
   // orbit.addEventListener( 'change', render );
-  //   controls.addEventListener('end', (e) => {
-  //     // Update localStorage?
-  //     console.log('Cam change', e)
-  //     config.store.camera = JSON.stringify(camera.position)
-  //   })
+  // controls.addEventListener('end', (e) => {
+  //   // Update localStorage?
+  //   console.log('Cam change', e)
+  //   config.store.camera = JSON.stringify(camera.position)
+  // })
 
   // Set background
   scene.background = new THREE.Color(config.background)
@@ -104,5 +109,11 @@ export function setup (_config = DEFAULT_CONFIG) {
   camera.position.z = 5
 
   // Expose
-  return { scene, controls, camera, renderer, element }
+  return {
+    scene,
+    controls,
+    camera,
+    renderer,
+    element
+  }
 }

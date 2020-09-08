@@ -11,4 +11,14 @@ window.ParametricJs = {
   features
 }
 
-export default Parametric
+// export default Parametric
+export {
+  Parametric
+}
+
+export default {
+  Scene: Parametric,
+  Feature,
+  Part,
+  features
+}

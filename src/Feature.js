@@ -8,6 +8,9 @@ const FEATURE = {
   props: {},
   // Internals
   $shapes: [],
+  $root: {
+    camera: {}
+  },
   // Methods
   render () { },
   destroy () { }
@@ -147,6 +150,11 @@ export default class Feature {
     const context = {
       ...this,
 
+      // Expose $root
+      camera: this.$root.camera,
+      container: this.$root.container,
+      renderer: this.$root.renderer,
+
       scene,
 
       getEntity,
@@ -182,7 +190,7 @@ export default class Feature {
     const fn = this.render
     const resp = fn.bind(this)(context) || scene
 
-    console.log(resp)
+    // console.log(resp)
 
     // Validation
     // if (!resp) {
